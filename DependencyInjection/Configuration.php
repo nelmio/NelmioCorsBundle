@@ -31,7 +31,7 @@ class Configuration implements ConfigurationInterface
             ->children();
 
             $this->addOptions(
-                $children->arrayNode('defaults')
+                $children->arrayNode('defaults')->addDefaultsIfNotSet()
             )->end();
 
             $this->addOptions(
