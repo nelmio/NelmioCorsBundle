@@ -87,7 +87,7 @@ class Kernel
             $response->headers->set('Access-Control-Allow-Credentials', 'true');
         }
         if ($this->options['expose_headers']) {
-            $response->headers->set('Access-Control-Expose-Headers', strtolower(implode(' ', $this->options['expose_headers'])));
+            $response->headers->set('Access-Control-Expose-Headers', strtolower(implode(', ', $this->options['expose_headers'])));
         }
     }
 
@@ -99,10 +99,10 @@ class Kernel
             $response->headers->set('Access-Control-Allow-Credentials', 'true');
         }
         if ($options['allow_methods']) {
-            $response->headers->set('Access-Control-Allow-Methods', strtoupper(implode(' ', $options['allow_methods'])));
+            $response->headers->set('Access-Control-Allow-Methods', strtoupper(implode(', ', $options['allow_methods'])));
         }
         if ($options['allow_headers']) {
-            $response->headers->set('Access-Control-Allow-Headers', strtolower(implode(' ', $options['allow_headers'])));
+            $response->headers->set('Access-Control-Allow-Headers', strtolower(implode(', ', $options['allow_headers'])));
         }
         if ($options['max_age']) {
             $response->headers->set('Access-Control-Max-Age', $options['max_age']);
@@ -122,7 +122,7 @@ class Kernel
         }
 
         // check request headers
-        foreach (explode(' ', $request->headers->get('Access-Control-Request-Headers')) as $header) {
+        foreach (preg_split('{, *}', $request->headers->get('Access-Control-Request-Headers')) as $header) {
             if (!in_array($header, $options['allow_headers'], true)) {
                 $response->setStatusCode(400);
                 $response->setContent('Unauthorized header '.$header);
