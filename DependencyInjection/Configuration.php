@@ -13,6 +13,9 @@ namespace Nelmio\CorsBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\Config\Definition\Builder\BooleanNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\ScalarNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
 /**
  * @author Jordi Boggiano <j.boggiano@seld.be>
@@ -27,59 +30,101 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('nelmio_cors');
 
-        $children = $rootNode
-            ->children();
+        $rootNode
+            ->children()
+                ->arrayNode('defaults')
+                    ->addDefaultsIfNotSet()
+                    ->append($this->getAllowCredentials())
+                    ->append($this->getAllowOrigin())
+                    ->append($this->getAllowHeaders())
+                    ->append($this->getAllowMethods())
+                    ->append($this->getExposeHeaders())
+                    ->append($this->getMaxAge())
+                ->end()
 
-            $this->addOptions(
-                $children->arrayNode('defaults')->addDefaultsIfNotSet()
-            )->end();
-
-            $this->addOptions(
-                $children
-                    ->arrayNode('paths')
-                        ->useAttributeAsKey('path')
-                        ->prototype('array')
-            )->end()
-        ->end();
+                ->arrayNode('paths')
+                    ->useAttributeAsKey('path')
+                    ->prototype('array')
+                        ->append($this->getAllowCredentials())
+                        ->append($this->getAllowOrigin())
+                        ->append($this->getAllowHeaders())
+                        ->append($this->getAllowMethods())
+                        ->append($this->getExposeHeaders())
+                        ->append($this->getMaxAge())
+                    ->end()
+                ->end()
+            ;
 
         return $treeBuilder;
     }
 
-    protected function addOptions($node)
+    private function getAllowCredentials()
     {
+        $node = new BooleanNodeDefinition('allow_credentials');
+        $node->defaultFalse();
+
+        return $node;
+    }
+
+    private function getAllowOrigin()
+    {
+        $node = new ArrayNodeDefinition('allow_origin');
+
         $node
-            ->children()
-                ->booleanNode('allow_credentials')->defaultFalse()->end()
-                ->arrayNode('allow_origin')
-                    ->beforeNormalization()
-                        ->always(function($v) {
-                            if ($v === '*') {
-                                return array('*');
-                            }
-                            return $v;
-                        })
-                    ->end()
-                    ->prototype('scalar')->end()
-                ->end()
-                ->arrayNode('allow_headers')
-                    ->prototype('scalar')->end()
-                ->end()
-                ->arrayNode('allow_methods')
-                    ->prototype('scalar')->end()
-                ->end()
-                ->arrayNode('expose_headers')
-                    ->prototype('scalar')->end()
-                ->end()
-                ->scalarNode('max_age')
-                    ->defaultValue(0)
-                    ->validate()
-                        ->ifTrue(function ($v) {
-                            return !is_numeric($v);
-                        })
-                        ->thenInvalid('max_age must be an integer (seconds)')
-                    ->end()
-                ->end()
-            ->end();
+            ->beforeNormalization()
+                ->always(function($v) {
+                    if ($v === '*') {
+                        return array('*');
+                    }
+                    return $v;
+                })
+            ->end()
+            ->prototype('scalar')->end()
+        ;
+
+        return $node;
+    }
+
+    private function getAllowHeaders()
+    {
+        $node = new ArrayNodeDefinition('allow_headers');
+
+        $node->prototype('scalar')->end();
+
+        return $node;
+    }
+
+    private function getAllowMethods()
+    {
+        $node = new ArrayNodeDefinition('allow_methods');
+
+        $node->prototype('scalar')->end();
+
+        return $node;
+    }
+
+    private function getExposeHeaders()
+    {
+        $node = new ArrayNodeDefinition('expose_headers');
+
+        $node->prototype('scalar')->end();
+
+        return $node;
+    }
+
+    private function getMaxAge()
+    {
+        $node = new ScalarNodeDefinition('max_age');
+
+        $node
+            ->defaultValue(0)
+            ->validate()
+                ->ifTrue(function ($v) {
+                    return !is_numeric($v);
+                })
+                ->thenInvalid('max_age must be an integer (seconds)')
+            ->end()
+        ;
 
         return $node;
     }
