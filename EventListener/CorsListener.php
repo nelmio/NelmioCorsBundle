@@ -22,7 +22,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *
  * @author Jordi Boggiano <j.boggiano@seld.be>
  */
-class Kernel
+class CorsListener
 {
     protected $dispatcher;
     protected $paths;
