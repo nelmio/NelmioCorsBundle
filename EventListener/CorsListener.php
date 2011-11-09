@@ -54,6 +54,7 @@ class CorsListener
         foreach ($this->paths as $path => $options) {
             if (preg_match('{'.$path.'}i', $currentPath)) {
                 $options = array_merge($this->defaults, $options);
+                $options['allow_headers'] = array_map('strtolower', $options['allow_headers']);
 
                 // perform preflight checks
                 if ('OPTIONS' === $request->getMethod()) {
@@ -102,7 +103,7 @@ class CorsListener
             $response->headers->set('Access-Control-Allow-Methods', strtoupper(implode(', ', $options['allow_methods'])));
         }
         if ($options['allow_headers']) {
-            $response->headers->set('Access-Control-Allow-Headers', strtolower(implode(', ', $options['allow_headers'])));
+            $response->headers->set('Access-Control-Allow-Headers', implode(', ', $options['allow_headers']));
         }
         if ($options['max_age']) {
             $response->headers->set('Access-Control-Max-Age', $options['max_age']);
@@ -122,7 +123,8 @@ class CorsListener
         }
 
         // check request headers
-        foreach (preg_split('{, *}', $request->headers->get('Access-Control-Request-Headers')) as $header) {
+        $headers = strtolower($request->headers->get('Access-Control-Request-Headers'));
+        foreach (preg_split('{, *}', $headers) as $header) {
             if (!in_array($header, $options['allow_headers'], true)) {
                 $response->setStatusCode(400);
                 $response->setContent('Unauthorized header '.$header);
