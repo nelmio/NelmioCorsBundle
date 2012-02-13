@@ -123,12 +123,14 @@ class CorsListener
         }
 
         // check request headers
-        $headers = strtolower($request->headers->get('Access-Control-Request-Headers'));
-        foreach (preg_split('{, *}', $headers) as $header) {
-            if (!in_array($header, $options['allow_headers'], true)) {
-                $response->setStatusCode(400);
-                $response->setContent('Unauthorized header '.$header);
-                break;
+        $headers = trim(strtolower($request->headers->get('Access-Control-Request-Headers')));
+        if ($headers) {
+            foreach (preg_split('{, *}', $headers) as $header) {
+                if (!in_array($header, $options['allow_headers'], true)) {
+                    $response->setStatusCode(400);
+                    $response->setContent('Unauthorized header '.$header);
+                    break;
+                }
             }
         }
 
