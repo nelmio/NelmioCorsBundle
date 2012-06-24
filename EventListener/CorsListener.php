@@ -24,6 +24,15 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class CorsListener
 {
+    /**
+     * Simple headers as defined in the spec should always be accepted
+     */
+    protected static $simpleHeaders = array(
+        'accept',
+        'accept-language',
+        'content-language',
+    );
+
     protected $dispatcher;
     protected $paths;
     protected $defaults;
@@ -126,6 +135,9 @@ class CorsListener
         $headers = trim(strtolower($request->headers->get('Access-Control-Request-Headers')));
         if ($headers) {
             foreach (preg_split('{, *}', $headers) as $header) {
+                if (in_array($header, self::$simpleHeaders, true)) {
+                    continue;
+                }
                 if (!in_array($header, $options['allow_headers'], true)) {
                     $response->setStatusCode(400);
                     $response->setContent('Unauthorized header '.$header);
