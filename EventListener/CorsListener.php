@@ -123,7 +123,7 @@ class CorsListener
             return $response;
         }
 
-        $response->headers->set('Access-Control-Allow-Origin', $options['allow_origin'] === true ? '*' : implode(', ', $options['allow_origin']));
+        $response->headers->set('Access-Control-Allow-Origin', $options['allow_origin'] === true ? '*' : implode(' ', $options['allow_origin']));
 
         // check request method
         if (!in_array($request->headers->get('Access-Control-Request-Method'), $options['allow_methods'], true)) {
