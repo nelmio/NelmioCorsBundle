@@ -31,6 +31,7 @@ class CorsListener
         'accept',
         'accept-language',
         'content-language',
+        'origin',
     );
 
     protected $dispatcher;
