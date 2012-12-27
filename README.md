@@ -45,9 +45,15 @@ Put the NelmioCorsBundle into the ``vendor/bundles/Nelmio`` directory:
 
 Register the `Nelmio` namespace in your project's autoload script (app/autoload.php):
 
+(Symfony 2.0.x):
+
     $loader->registerNamespaces(array(
         'Nelmio'                        => __DIR__.'/../vendor/bundles',
     ));
+    
+(Symfony 2.1.x):
+
+    $loader->add('Nelmio', __DIR__.'/../vendor/bundles');
 
 Add the NelmioCorsBundle to your application's kernel:
 
