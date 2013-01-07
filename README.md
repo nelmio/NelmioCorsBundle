@@ -37,7 +37,7 @@ seconds.
                 allow_methods: ['POST', 'PUT', 'GET', 'DELETE']
                 max_age: 3600
 
-## Installation (Symony 2.1+)
+## Installation (Symfony 2.1+)
 
 Require the `nelmio/cors-bundle` package in your composer.json and update your dependencies.
 
@@ -55,7 +55,7 @@ Add the NelmioCorsBundle to your application's kernel:
         ...
     }
 
-## Installation (Symony 2.0)
+## Installation (Symfony 2.0)
 
 Put the NelmioCorsBundle into the `vendor/bundles/Nelmio` directory:
 
