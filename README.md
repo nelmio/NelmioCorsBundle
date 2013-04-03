@@ -41,7 +41,7 @@ seconds.
 
 Require the `nelmio/cors-bundle` package in your composer.json and update your dependencies.
 
-    $ composer require nelmio/cors-bundle:*
+    $ composer require nelmio/cors-bundle:~1.0
 
 Add the NelmioCorsBundle to your application's kernel:
 
