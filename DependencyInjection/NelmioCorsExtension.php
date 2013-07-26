@@ -58,7 +58,7 @@ class NelmioCorsExtension extends Extension
             $config['paths'][$path] = $opts;
         }
 
-        $container->setParameter('nelmio_cors.defaults', $config['defaults']);
+        $container->setParameter('nelmio_cors.defaults', $defaults);
         $container->setParameter('nelmio_cors.map', $config['paths']);
 
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
