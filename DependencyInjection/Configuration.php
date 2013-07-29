@@ -89,7 +89,16 @@ class Configuration implements ConfigurationInterface
     {
         $node = new ArrayNodeDefinition('allow_headers');
 
-        $node->prototype('scalar')->end();
+        $node
+            ->beforeNormalization()
+                ->always(function($v) {
+                    if ($v === '*') {
+                        return array('*');
+                    }
+                    return $v;
+                })
+            ->end()
+            ->prototype('scalar')->end();
 
         return $node;
     }

@@ -40,6 +40,9 @@ seconds.
                 allow_methods: ['POST', 'PUT', 'GET', 'DELETE']
                 max_age: 3600
 
+`allow_origin` and `allow_headers` can be set to `*` to accept any value, the
+allowed methods however have to be explicitly listed.
+
 ## Installation (Symfony 2.1+)
 
 Require the `nelmio/cors-bundle` package in your composer.json and update your dependencies.

@@ -49,10 +49,20 @@ class NelmioCorsExtension extends Extension
         if (in_array('*', $defaults['allow_origin'])) {
             $defaults['allow_origin'] = true;
         }
+        if (in_array('*', $defaults['allow_headers'])) {
+            $defaults['allow_headers'] = true;
+        } else {
+            $defaults['allow_headers'] = array_map('strtolower', $defaults['allow_headers']);
+        }
         foreach ($config['paths'] as $path => $opts) {
             $opts = array_filter($opts);
             if (isset($opts['allow_origin']) && in_array('*', $opts['allow_origin'])) {
                 $opts['allow_origin'] = true;
+            }
+            if (isset($opts['allow_headers']) && in_array('*', $opts['allow_headers'])) {
+                $opts['allow_headers'] = true;
+            } elseif (isset($opts['allow_headers'])) {
+                $opts['allow_headers'] = array_map('strtolower', $opts['allow_headers']);
             }
 
             $config['paths'][$path] = $opts;
