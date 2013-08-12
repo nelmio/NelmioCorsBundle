@@ -17,6 +17,9 @@
     "require": {
         "symfony/framework-bundle": "~2.0"
     },
+    "require-dev": {
+        "mockery/mockery": "dev-master"
+    },
     "autoload": {
         "psr-0": { "Nelmio\\CorsBundle": "" }
     },

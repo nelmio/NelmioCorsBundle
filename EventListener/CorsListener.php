@@ -12,6 +12,7 @@
 namespace Nelmio\CorsBundle\EventListener;
 
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -93,7 +94,7 @@ class CorsListener
         $response = $event->getResponse();
         $request = $event->getRequest();
         // add CORS response headers
-        $response->headers->set('Access-Control-Allow-Origin', $this->options['allow_origin'] === true ? '*' : $request->headers->get('Origin'));
+        $response->headers->set('Access-Control-Allow-Origin', $request->headers->get('Origin'));
         if ($this->options['allow_credentials']) {
             $response->headers->set('Access-Control-Allow-Credentials', 'true');
         }
@@ -102,7 +103,7 @@ class CorsListener
         }
     }
 
-    protected function getPreflightResponse($request, $options)
+    protected function getPreflightResponse(Request $request, array $options)
     {
         $response = new Response();
 
@@ -124,7 +125,7 @@ class CorsListener
             return $response;
         }
 
-        $response->headers->set('Access-Control-Allow-Origin', $options['allow_origin'] === true ? '*' : $request->headers->get('Origin'));
+        $response->headers->set('Access-Control-Allow-Origin', $request->headers->get('Origin'));
 
         // check request method
         if (!in_array($request->headers->get('Access-Control-Request-Method'), $options['allow_methods'], true)) {
@@ -151,7 +152,7 @@ class CorsListener
         return $response;
     }
 
-    protected function checkOrigin($request, $options)
+    protected function checkOrigin(Request $request, array $options)
     {
         // check origin
         $origin = $request->headers->get('Origin');
