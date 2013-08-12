@@ -114,7 +114,10 @@ class CorsListener
             $response->headers->set('Access-Control-Allow-Methods', strtoupper(implode(', ', $options['allow_methods'])));
         }
         if ($options['allow_headers']) {
-            $response->headers->set('Access-Control-Allow-Headers', $options['allow_headers'] === true ? $request->headers->get('Access-Control-Request-Headers') : implode(', ', $options['allow_headers']));
+            $headers = $options['allow_headers'] === true
+                ? $request->headers->get('Access-Control-Request-Headers')
+                : implode(', ', $options['allow_headers']);
+            $response->headers->set('Access-Control-Allow-Headers', $headers);
         }
         if ($options['max_age']) {
             $response->headers->set('Access-Control-Max-Age', $options['max_age']);
@@ -128,7 +131,7 @@ class CorsListener
         $response->headers->set('Access-Control-Allow-Origin', $request->headers->get('Origin'));
 
         // check request method
-        if (!in_array($request->headers->get('Access-Control-Request-Method'), $options['allow_methods'], true)) {
+        if (!in_array(strtoupper($request->headers->get('Access-Control-Request-Method')), $options['allow_methods'], true)) {
             $response->setStatusCode(405);
             return $response;
         }

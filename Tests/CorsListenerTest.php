@@ -48,13 +48,13 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
         $config = array('/foo' => array(
             'allow_origin' => array(true),
             'allow_headers' => array('foo', 'bar'),
-            'allow_methods' => array('post', 'PUT'),
+            'allow_methods' => array('POST', 'PUT'),
         ));
 
         // preflight
         $req = Request::create('/foo', 'OPTIONS');
         $req->headers->set('Origin', 'http://example.com');
-        $req->headers->set('Access-Control-Request-Method', 'POST');
+        $req->headers->set('Access-Control-Request-Method', 'Post');
         $req->headers->set('Access-Control-Request-Headers', 'Foo, BAR');
 
         $dispatcher = m::mock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
@@ -62,6 +62,7 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
         $this->getListener($config, array(), $dispatcher)->onKernelRequest($event);
         $resp = $event->getResponse();
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $resp);
+        $this->assertEquals(200, $resp->getStatusCode());
         $this->assertEquals('http://example.com', $resp->headers->get('Access-Control-Allow-Origin'));
         $this->assertEquals('POST, PUT', $resp->headers->get('Access-Control-Allow-Methods'));
         $this->assertEquals('foo, bar', $resp->headers->get('Access-Control-Allow-Headers'));
@@ -86,6 +87,7 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
         $this->getListener($config, array(), $dispatcher)->onKernelResponse($event);
         $resp = $event->getResponse();
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $resp);
+        $this->assertEquals(200, $resp->getStatusCode());
         $this->assertEquals('http://example.com', $resp->headers->get('Access-Control-Allow-Origin'));
         $this->assertEquals(null, $resp->headers->get('Access-Control-Allow-Methods'));
         $this->assertEquals(null, $resp->headers->get('Access-Control-Allow-Headers'));

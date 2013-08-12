@@ -54,6 +54,7 @@ class NelmioCorsExtension extends Extension
         } else {
             $defaults['allow_headers'] = array_map('strtolower', $defaults['allow_headers']);
         }
+        $defaults['allow_methods'] = array_map('strtoupper', $defaults['allow_methods']);
         foreach ($config['paths'] as $path => $opts) {
             $opts = array_filter($opts);
             if (isset($opts['allow_origin']) && in_array('*', $opts['allow_origin'])) {
@@ -64,6 +65,7 @@ class NelmioCorsExtension extends Extension
             } elseif (isset($opts['allow_headers'])) {
                 $opts['allow_headers'] = array_map('strtolower', $opts['allow_headers']);
             }
+            $opts['allow_methods'] = array_map('strtoupper', $opts['allow_methods']);
 
             $config['paths'][$path] = $opts;
         }
