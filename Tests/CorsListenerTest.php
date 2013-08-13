@@ -54,7 +54,7 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
         // preflight
         $req = Request::create('/foo', 'OPTIONS');
         $req->headers->set('Origin', 'http://example.com');
-        $req->headers->set('Access-Control-Request-Method', 'Post');
+        $req->headers->set('Access-Control-Request-Method', 'POST');
         $req->headers->set('Access-Control-Request-Headers', 'Foo, BAR');
 
         $dispatcher = m::mock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
