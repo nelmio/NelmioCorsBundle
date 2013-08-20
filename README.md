@@ -88,3 +88,25 @@ Add the NelmioCorsBundle to your application's kernel:
 ## License
 
 Released under the MIT License, see LICENSE.
+
+
+------
+
+Some notes:
+
+Working test-config:
+
+nelmio_cors:
+    defaults:
+        allow_credentials: true
+        allow_origin: ['*']
+        allow_headers: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'x-custom-auth']
+        allow_methods: ['POST', 'PUT', 'GET', 'DELETE']
+        expose_headers: []
+        max_age: 0
+    paths:
+        '^/api/':
+            allow_origin: ['*']
+            allow_headers: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'x-custom-auth']
+            allow_methods: ['POST', 'PUT', 'GET', 'DELETE']
+            max_age: 3600

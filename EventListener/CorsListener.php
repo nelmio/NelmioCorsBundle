@@ -39,16 +39,26 @@ class CorsListener
     protected $paths;
     protected $defaults;
     protected $options;
+    protected $logger;
 
-    public function __construct(EventDispatcherInterface $dispatcher, array $paths, array $defaults = array())
+    public function __construct(EventDispatcherInterface $dispatcher, array $paths, array $defaults = array(), $container)
     {
         $this->dispatcher = $dispatcher;
         $this->paths = $paths;
         $this->defaults = $defaults;
+        $this->container = $container;
+        $this->logger = $container->get('logger');
     }
 
     public function onKernelRequest(GetResponseEvent $event)
     {
+        $request = $event->getRequest();
+
+        if ('OPTIONS' === $request->getMethod()) {
+            $this->logger->err('THIS123: '.$request->getMethod().' - '.$request->headers->has('Origin').' - '.$request->getPathInfo().' - '.$event->getRequestType());
+            $this->logger->err('THIS123: NOT INSIDE'.print_r(HttpKernelInterface::MASTER_REQUEST,true).' - '.print_r($event->getRequestType(),true));
+        }
+
         if (HttpKernelInterface::MASTER_REQUEST !== $event->getRequestType()) {
             return;
         }
@@ -60,10 +70,15 @@ class CorsListener
             return;
         }
 
+        if($request->getHost() === 'api.partnermarketing2.com') {
+            $apirequest = true;
+        }
+        else $apirequest = true;
+        
         $currentPath = $request->getPathInfo() ?: '/';
 
         foreach ($this->paths as $path => $options) {
-            if (preg_match('{'.$path.'}i', $currentPath)) {
+            if (preg_match('{'.$path.'}i', $currentPath) || $apirequest) {
                 $options = array_merge($this->defaults, $options);
 
                 // perform preflight checks
@@ -105,6 +120,7 @@ class CorsListener
 
     protected function getPreflightResponse(Request $request, array $options)
     {
+        $this->logger->err('THIS123: getPreflightResponse start - ');
         $response = new Response();
 
         if ($options['allow_credentials']) {
@@ -145,6 +161,7 @@ class CorsListener
                     continue;
                 }
                 if (!in_array($header, $options['allow_headers'], true)) {
+                    $this->logger->err('THIS123: getPreflightResponse end - 400 created - '.print_r($header,true));
                     $response->setStatusCode(400);
                     $response->setContent('Unauthorized header '.$header);
                     break;
@@ -152,6 +169,11 @@ class CorsListener
             }
         }
 
+        $this->logger->err('THIS123: getPreflightResponse end - '.$request->headers->get('Origin'));
+        $this->logger->err('THIS123: getPreflightResponse end - '.$response->getStatusCode());
+        $this->logger->err('THIS123: getPreflightResponse end - '.print_r($options['allow_headers'],true));
+        $this->logger->err('THIS123: getPreflightResponse end - '.print_r($headers,true));
+        $this->logger->err('THIS123: getPreflightResponse end - '.print_r(self::$simpleHeaders,true));
         return $response;
     }
 
