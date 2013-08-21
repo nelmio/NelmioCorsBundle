@@ -70,16 +70,20 @@ class CorsListener
             return;
         }
 
-        if($request->getHost() === 'api.partnermarketing2.com') {
-            $apirequest = true;
-        }
-        else $apirequest = true;
+        $this->logger->err('currentpath action: getPreflightResponse start - '.print_r($this->paths,true));
         
         $currentPath = $request->getPathInfo() ?: '/';
 
         foreach ($this->paths as $path => $options) {
-            if (preg_match('{'.$path.'}i', $currentPath) || $apirequest) {
+            if (preg_match('{'.$path.'}i', $currentPath)) {
+
                 $options = array_merge($this->defaults, $options);
+
+                if ($options['subdomain'] !== '' && strpos($request->getHost(), $options['subdomain'].'.') !== 0) {
+                    $response = new Response('', 403, array('Access-Control-Allow-Origin' => 'null'));
+                    $event->setResponse($response);
+                    return;
+                }
 
                 // perform preflight checks
                 if ('OPTIONS' === $request->getMethod()) {

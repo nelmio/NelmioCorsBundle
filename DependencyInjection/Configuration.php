@@ -17,6 +17,7 @@ use Symfony\Component\Config\Definition\Builder\BooleanNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\ScalarNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
+
 /**
  * @author Jordi Boggiano <j.boggiano@seld.be>
  */
@@ -40,6 +41,7 @@ class Configuration implements ConfigurationInterface
                     ->append($this->getAllowMethods())
                     ->append($this->getExposeHeaders())
                     ->append($this->getMaxAge())
+                    ->append($this->getSubdomain())
                 ->end()
 
                 ->arrayNode('paths')
@@ -51,6 +53,7 @@ class Configuration implements ConfigurationInterface
                         ->append($this->getAllowMethods())
                         ->append($this->getExposeHeaders())
                         ->append($this->getMaxAge())
+                        ->append($this->getSubdomain())
                     ->end()
                 ->end()
             ;
@@ -134,6 +137,15 @@ class Configuration implements ConfigurationInterface
                 ->thenInvalid('max_age must be an integer (seconds)')
             ->end()
         ;
+
+        return $node;
+    }
+
+    private function getSubdomain()
+    {
+        $node = new ScalarNodeDefinition('subdomain');
+
+        $node->defaultValue("")->end();
 
         return $node;
     }

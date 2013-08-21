@@ -36,6 +36,7 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
                 'expose_headers' => array(),
                 'allow_methods' => array(),
                 'max_age' => 0,
+                'host_prefix' => '',
             ),
             $defaults
         );
@@ -49,11 +50,12 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
             'allow_origin' => array(true),
             'allow_headers' => array('foo', 'bar'),
             'allow_methods' => array('POST', 'PUT'),
+            'subdomain' => 'test'
         ));
 
         // preflight
         $req = Request::create('/foo', 'OPTIONS');
-        $req->headers->set('Origin', 'http://example.com');
+        $req->headers->set('Origin', 'http://test.example.com');
         $req->headers->set('Access-Control-Request-Method', 'POST');
         $req->headers->set('Access-Control-Request-Headers', 'Foo, BAR');
 
@@ -63,13 +65,13 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
         $resp = $event->getResponse();
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $resp);
         $this->assertEquals(200, $resp->getStatusCode());
-        $this->assertEquals('http://example.com', $resp->headers->get('Access-Control-Allow-Origin'));
+        $this->assertEquals('http://test.example.com', $resp->headers->get('Access-Control-Allow-Origin'));
         $this->assertEquals('POST, PUT', $resp->headers->get('Access-Control-Allow-Methods'));
         $this->assertEquals('foo, bar', $resp->headers->get('Access-Control-Allow-Headers'));
 
         // actual request
         $req = Request::create('/foo', 'POST');
-        $req->headers->set('Origin', 'http://example.com');
+        $req->headers->set('Origin', 'http://test.example.com');
         $req->headers->set('Foo', 'huh');
         $req->headers->set('BAR', 'lala');
 
@@ -88,8 +90,32 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
         $resp = $event->getResponse();
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $resp);
         $this->assertEquals(200, $resp->getStatusCode());
-        $this->assertEquals('http://example.com', $resp->headers->get('Access-Control-Allow-Origin'));
+        $this->assertEquals('http://test.example.com', $resp->headers->get('Access-Control-Allow-Origin'));
         $this->assertEquals(null, $resp->headers->get('Access-Control-Allow-Methods'));
         $this->assertEquals(null, $resp->headers->get('Access-Control-Allow-Headers'));
+    }
+
+    public function testPreflightedRequestNotMatchingSubdomain()
+    {
+        $config = array('/foo' => array(
+            'allow_origin' => array(true),
+            'allow_headers' => array('foo', 'bar'),
+            'allow_methods' => array('POST', 'PUT'),
+            'subdomain' => 'test'
+        ));
+
+        // preflight
+        $req = Request::create('/foo', 'OPTIONS');
+        $req->headers->set('Origin', 'http://example.com');
+        $req->headers->set('Access-Control-Request-Method', 'POST');
+        $req->headers->set('Access-Control-Request-Headers', 'Foo, BAR');
+
+        $dispatcher = m::mock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $event = new GetResponseEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST);
+        $this->getListener($config, array(), $dispatcher)->onKernelRequest($event);
+        $resp = $event->getResponse();
+        var_dump($resp->getStatusCode());
+        exit();
+        $this->assertEquals(403, $resp->getStatusCode());
     }
 }
