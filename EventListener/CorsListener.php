@@ -69,8 +69,16 @@ class CorsListener
 
                 $options = array_merge($this->defaults, $options);
 
-                if ($options['subdomain'] !== '' && strpos($request->getHost(), $options['subdomain'].'.') !== 0) {
-                    return;
+                if (count($options['hosts']) > 0) {
+                    $found = false;
+                    foreach ($options['hosts'] as $key => $value) {
+                        if(preg_match('{'.$value.'}i', $request->getHost())) {
+                            $found = true;
+                        }
+                    }
+                    if(!$found) {
+                        return;
+                    }
                 }
 
                 // perform preflight checks

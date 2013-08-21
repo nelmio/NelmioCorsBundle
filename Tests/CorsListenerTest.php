@@ -36,7 +36,7 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
                 'expose_headers' => array(),
                 'allow_methods' => array(),
                 'max_age' => 0,
-                'subdomain' => '',
+                'hosts' => array(),
             ),
             $defaults
         );
@@ -50,7 +50,6 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
             'allow_origin' => array(true),
             'allow_headers' => array('foo', 'bar'),
             'allow_methods' => array('POST', 'PUT'),
-            'subdomain' => '',
         ));
 
         // preflight
@@ -101,7 +100,7 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
             'allow_origin' => array(true),
             'allow_headers' => array('foo', 'bar'),
             'allow_methods' => array('POST', 'PUT'),
-            'subdomain' => 'test',
+            'hosts' => array('^test\.'),
         ));
 
         // preflight
@@ -123,7 +122,7 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
             'allow_origin' => array(true),
             'allow_headers' => array('foo', 'bar'),
             'allow_methods' => array('POST', 'PUT'),
-            'subdomain' => 'test',
+            'hosts' => array('^test\.'),
         ));
 
         // preflight
@@ -149,7 +148,7 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
             'allow_origin' => array(true),
             'allow_headers' => array('foo', 'bar'),
             'allow_methods' => array('POST', 'PUT'),
-            'subdomain' => 'test.stage',
+            'hosts' => array('first\.','^test\.stage\.','second\.stage\.'),
         ));
 
         // preflight

@@ -40,7 +40,7 @@ class Configuration implements ConfigurationInterface
                     ->append($this->getAllowMethods())
                     ->append($this->getExposeHeaders())
                     ->append($this->getMaxAge())
-                    ->append($this->getSubdomain())
+                    ->append($this->getHosts())
                 ->end()
 
                 ->arrayNode('paths')
@@ -52,7 +52,7 @@ class Configuration implements ConfigurationInterface
                         ->append($this->getAllowMethods())
                         ->append($this->getExposeHeaders())
                         ->append($this->getMaxAge())
-                        ->append($this->getSubdomain())
+                        ->append($this->getHosts())
                     ->end()
                 ->end()
             ;
@@ -142,11 +142,11 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function getSubdomain()
+    private function getHosts()
     {
-        $node = new ScalarNodeDefinition('subdomain');
+        $node = new ScalarNodeDefinition('hosts');
 
-        $node->defaultValue("")->end();
+        $node->prototype('scalar')->end();
 
         return $node;
     }
