@@ -50,7 +50,7 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
             'allow_origin' => array(true),
             'allow_headers' => array('foo', 'bar'),
             'allow_methods' => array('POST', 'PUT'),
-            'subdomain' => ''
+            'subdomain' => '',
         ));
 
         // preflight
@@ -101,11 +101,11 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
             'allow_origin' => array(true),
             'allow_headers' => array('foo', 'bar'),
             'allow_methods' => array('POST', 'PUT'),
-            'subdomain' => 'test'
+            'subdomain' => 'test',
         ));
 
         // preflight
-        $req = Request::create('/foo', 'OPTIONS');
+        $req = Request::create('/foo', 'OPTIONS', array(), array(), array(), array('HTTP_HOST' => 'example.com'));
         $req->headers->set('Origin', 'http://example.com');
         $req->headers->set('Access-Control-Request-Method', 'POST');
         $req->headers->set('Access-Control-Request-Headers', 'Foo, BAR');
@@ -114,7 +114,7 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
         $event = new GetResponseEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST);
         $this->getListener($config, array(), $dispatcher)->onKernelRequest($event);
         $resp = $event->getResponse();
-        $this->assertEquals(403, $resp->getStatusCode());
+        $this->assertEquals(NULL, $resp);
     }
 
     public function testPreflightedRequestMatchingSubdomain()
@@ -123,7 +123,7 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
             'allow_origin' => array(true),
             'allow_headers' => array('foo', 'bar'),
             'allow_methods' => array('POST', 'PUT'),
-            'subdomain' => 'test'
+            'subdomain' => 'test',
         ));
 
         // preflight
@@ -149,7 +149,7 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
             'allow_origin' => array(true),
             'allow_headers' => array('foo', 'bar'),
             'allow_methods' => array('POST', 'PUT'),
-            'subdomain' => 'test.stage'
+            'subdomain' => 'test.stage',
         ));
 
         // preflight

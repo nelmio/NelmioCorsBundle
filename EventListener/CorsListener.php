@@ -70,9 +70,6 @@ class CorsListener
                 $options = array_merge($this->defaults, $options);
 
                 if ($options['subdomain'] !== '' && strpos($request->getHost(), $options['subdomain'].'.') !== 0) {
-                    $response = new Response('', 403, array('Access-Control-Allow-Origin' => 'null'));
-                    $event->setResponse($response);
-
                     return;
                 }
 
