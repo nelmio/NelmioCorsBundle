@@ -144,7 +144,7 @@ class Configuration implements ConfigurationInterface
 
     private function getHosts()
     {
-        $node = new ScalarNodeDefinition('hosts');
+        $node = new ArrayNodeDefinition('hosts');
 
         $node->prototype('scalar')->end();
 
