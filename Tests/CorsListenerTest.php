@@ -36,7 +36,7 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
                 'expose_headers' => array(),
                 'allow_methods' => array(),
                 'max_age' => 0,
-                'host_prefix' => '',
+                'subdomain' => '',
             ),
             $defaults
         );
