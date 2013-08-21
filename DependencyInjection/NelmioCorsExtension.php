@@ -41,6 +41,7 @@ class NelmioCorsExtension extends Extension
                 'expose_headers' => array(),
                 'allow_methods' => array(),
                 'max_age' => 0,
+                'hosts' => array(),
             ),
             $config['defaults']
         );
