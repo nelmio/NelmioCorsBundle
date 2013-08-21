@@ -40,6 +40,7 @@ class Configuration implements ConfigurationInterface
                     ->append($this->getAllowMethods())
                     ->append($this->getExposeHeaders())
                     ->append($this->getMaxAge())
+                    ->append($this->getSubdomain())
                 ->end()
 
                 ->arrayNode('paths')
@@ -51,6 +52,7 @@ class Configuration implements ConfigurationInterface
                         ->append($this->getAllowMethods())
                         ->append($this->getExposeHeaders())
                         ->append($this->getMaxAge())
+                        ->append($this->getSubdomain())
                     ->end()
                 ->end()
             ;
@@ -76,6 +78,7 @@ class Configuration implements ConfigurationInterface
                     if ($v === '*') {
                         return array('*');
                     }
+
                     return $v;
                 })
             ->end()
@@ -95,6 +98,7 @@ class Configuration implements ConfigurationInterface
                     if ($v === '*') {
                         return array('*');
                     }
+
                     return $v;
                 })
             ->end()
@@ -134,6 +138,15 @@ class Configuration implements ConfigurationInterface
                 ->thenInvalid('max_age must be an integer (seconds)')
             ->end()
         ;
+
+        return $node;
+    }
+
+    private function getSubdomain()
+    {
+        $node = new ScalarNodeDefinition('subdomain');
+
+        $node->defaultValue("")->end();
 
         return $node;
     }
