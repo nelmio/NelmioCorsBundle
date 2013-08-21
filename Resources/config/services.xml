@@ -13,7 +13,6 @@
             <argument type="service" id="event_dispatcher" />
             <argument>%nelmio_cors.map%</argument>
             <argument>%nelmio_cors.defaults%</argument>
-            <argument type="service" id="service_container" />
             <tag name="kernel.event_listener" event="kernel.request" method="onKernelRequest" priority="10000" />
         </service>
     </services>
