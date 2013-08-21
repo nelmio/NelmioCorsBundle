@@ -51,8 +51,6 @@ class CorsListener
     {
         $request = $event->getRequest();
 
-
-
         if (HttpKernelInterface::MASTER_REQUEST !== $event->getRequestType()) {
             return;
         }
@@ -64,7 +62,6 @@ class CorsListener
             return;
         }
 
-        
         $currentPath = $request->getPathInfo() ?: '/';
 
         foreach ($this->paths as $path => $options) {
@@ -75,23 +72,27 @@ class CorsListener
                 if ($options['subdomain'] !== '' && strpos($request->getHost(), $options['subdomain'].'.') !== 0) {
                     $response = new Response('', 403, array('Access-Control-Allow-Origin' => 'null'));
                     $event->setResponse($response);
+
                     return;
                 }
 
                 // perform preflight checks
                 if ('OPTIONS' === $request->getMethod()) {
                     $event->setResponse($this->getPreflightResponse($request, $options));
+
                     return;
                 }
 
                 if (!$this->checkOrigin($request, $options)) {
                     $response = new Response('', 403, array('Access-Control-Allow-Origin' => 'null'));
                     $event->setResponse($response);
+
                     return;
                 }
 
                 $this->dispatcher->addListener('kernel.response', array($this, 'onKernelResponse'));
                 $this->options = $options;
+
                 return;
             }
         }
@@ -137,6 +138,7 @@ class CorsListener
 
         if (!$this->checkOrigin($request, $options)) {
             $response->headers->set('Access-Control-Allow-Origin', 'null');
+
             return $response;
         }
 
@@ -145,6 +147,7 @@ class CorsListener
         // check request method
         if (!in_array($request->headers->get('Access-Control-Request-Method'), $options['allow_methods'], true)) {
             $response->setStatusCode(405);
+
             return $response;
         }
 

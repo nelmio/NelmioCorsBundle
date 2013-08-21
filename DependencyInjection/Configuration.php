@@ -17,7 +17,6 @@ use Symfony\Component\Config\Definition\Builder\BooleanNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\ScalarNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
-
 /**
  * @author Jordi Boggiano <j.boggiano@seld.be>
  */
@@ -79,6 +78,7 @@ class Configuration implements ConfigurationInterface
                     if ($v === '*') {
                         return array('*');
                     }
+
                     return $v;
                 })
             ->end()
@@ -98,6 +98,7 @@ class Configuration implements ConfigurationInterface
                     if ($v === '*') {
                         return array('*');
                     }
+
                     return $v;
                 })
             ->end()

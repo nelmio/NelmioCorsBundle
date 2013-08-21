@@ -33,15 +33,17 @@ seconds.
             allow_methods: []
             expose_headers: []
             max_age: 0
+            subdomain: ''
         paths:
             '^/api/':
                 allow_origin: ['*']
                 allow_headers: ['X-Custom-Auth']
                 allow_methods: ['POST', 'PUT', 'GET', 'DELETE']
                 max_age: 3600
+                subdomain: ''
 
 `allow_origin` and `allow_headers` can be set to `*` to accept any value, the
-allowed methods however have to be explicitly listed.
+allowed methods however have to be explicitly listed. `paths` must contain at least one item.
 
 ## Installation (Symfony 2.1+)
 
@@ -88,25 +90,3 @@ Add the NelmioCorsBundle to your application's kernel:
 ## License
 
 Released under the MIT License, see LICENSE.
-
-
-------
-
-Some notes:
-
-Working test-config:
-
-nelmio_cors:
-    defaults:
-        allow_credentials: true
-        allow_origin: ['*']
-        allow_headers: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'x-custom-auth']
-        allow_methods: ['POST', 'PUT', 'GET', 'DELETE']
-        expose_headers: []
-        max_age: 0
-    paths:
-        '^/api/':
-            allow_origin: ['*']
-            allow_headers: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'x-custom-auth']
-            allow_methods: ['POST', 'PUT', 'GET', 'DELETE']
-            max_age: 3600

@@ -138,5 +138,34 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
         $resp = $event->getResponse();
 
         $this->assertEquals(200, $resp->getStatusCode());
+        $this->assertEquals('http://test.example.com', $resp->headers->get('Access-Control-Allow-Origin'));
+        $this->assertEquals('POST, PUT', $resp->headers->get('Access-Control-Allow-Methods'));
+        $this->assertEquals('foo, bar', $resp->headers->get('Access-Control-Allow-Headers'));
+    }
+
+    public function testPreflightedRequestMatchingSubdomainDouble()
+    {
+        $config = array('/foo' => array(
+            'allow_origin' => array(true),
+            'allow_headers' => array('foo', 'bar'),
+            'allow_methods' => array('POST', 'PUT'),
+            'subdomain' => 'test.stage'
+        ));
+
+        // preflight
+        $req = Request::create('/foo', 'OPTIONS', array(), array(), array(), array('HTTP_HOST' => 'test.stage.example.com'));
+        $req->headers->set('Origin', 'http://test.stage.example.com');
+        $req->headers->set('Access-Control-Request-Method', 'POST');
+        $req->headers->set('Access-Control-Request-Headers', 'Foo, BAR');
+
+        $dispatcher = m::mock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $event = new GetResponseEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST);
+        $this->getListener($config, array(), $dispatcher)->onKernelRequest($event);
+        $resp = $event->getResponse();
+
+        $this->assertEquals(200, $resp->getStatusCode());
+        $this->assertEquals('http://test.stage.example.com', $resp->headers->get('Access-Control-Allow-Origin'));
+        $this->assertEquals('POST, PUT', $resp->headers->get('Access-Control-Allow-Methods'));
+        $this->assertEquals('foo, bar', $resp->headers->get('Access-Control-Allow-Headers'));
     }
 }
