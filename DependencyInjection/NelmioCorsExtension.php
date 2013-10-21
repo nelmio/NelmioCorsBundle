@@ -65,7 +65,9 @@ class NelmioCorsExtension extends Extension
             } elseif (isset($opts['allow_headers'])) {
                 $opts['allow_headers'] = array_map('strtolower', $opts['allow_headers']);
             }
-            $opts['allow_methods'] = array_map('strtoupper', $opts['allow_methods']);
+            if (isset($opts['allow_methods'])) {
+                $opts['allow_methods'] = array_map('strtoupper', $opts['allow_methods']);
+            }
 
             $config['paths'][$path] = $opts;
         }
