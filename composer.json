@@ -15,7 +15,7 @@
         }
     ],
     "require": {
-        "symfony/framework-bundle": "~2.0"
+        "symfony/framework-bundle": "~2.1"
     },
     "require-dev": {
         "mockery/mockery": "dev-master"
@@ -26,7 +26,7 @@
     "target-dir": "Nelmio/CorsBundle",
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1.x-dev"
+            "dev-master": "1.2.x-dev"
         }
     }
 }
