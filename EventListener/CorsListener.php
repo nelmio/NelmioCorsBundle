@@ -56,7 +56,7 @@ class CorsListener
         $request = $event->getRequest();
 
         // skip if not a CORS request
-        if (!$request->headers->has('Origin')) {
+        if (!$request->headers->has('Origin') || $request->headers->get('Origin') == $request->getSchemeAndHttpHost()) {
             return;
         }
 
