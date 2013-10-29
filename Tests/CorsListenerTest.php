@@ -92,4 +92,26 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(null, $resp->headers->get('Access-Control-Allow-Methods'));
         $this->assertEquals(null, $resp->headers->get('Access-Control-Allow-Headers'));
     }
+
+    public function testSameHostRequest()
+    {
+        // Request with same host as origin
+        $config = array('/foo' => array(
+            'allow_origin' => array(),
+            'allow_headers' => array('foo', 'bar'),
+            'allow_methods' => array('POST', 'PUT'),
+        ));
+
+        $req = Request::create('/foo', 'POST');
+        $req->headers->set('Host', 'example.com');
+        $req->headers->set('Origin', 'http://example.com');
+
+        $callback = null;
+        $dispatcher = m::mock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+
+        $event = new GetResponseEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST);
+        $this->getListener($config, array(), $dispatcher)->onKernelRequest($event);
+
+        $this->assertNull($event->getResponse());
+    }
 }
