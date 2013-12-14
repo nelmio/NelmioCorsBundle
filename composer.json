@@ -18,7 +18,8 @@
         "symfony/framework-bundle": "~2.1"
     },
     "require-dev": {
-        "mockery/mockery": "dev-master"
+        "mockery/mockery": "dev-master",
+        "matthiasnoback/symfony-dependency-injection-test": "0.2.*"
     },
     "autoload": {
         "psr-0": { "Nelmio\\CorsBundle": "" }
