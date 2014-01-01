@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Nelmio\CorsBundle\Options\ResolverInterface;
 
 /**
  * Adds CORS headers and handles pre-flight requests
@@ -36,15 +37,15 @@ class CorsListener
     );
 
     protected $dispatcher;
-    protected $paths;
-    protected $defaults;
     protected $options;
 
-    public function __construct(EventDispatcherInterface $dispatcher, array $paths, array $defaults = array())
+    /** @var ResolverInterface */
+    protected $configurationResolver;
+
+    public function __construct(EventDispatcherInterface $dispatcher, ResolverInterface $configurationResolver)
     {
         $this->dispatcher = $dispatcher;
-        $this->paths = $paths;
-        $this->defaults = $defaults;
+        $this->configurationResolver = $configurationResolver;
     }
 
     public function onKernelRequest(GetResponseEvent $event)
@@ -60,29 +61,22 @@ class CorsListener
             return;
         }
 
-        $currentPath = $request->getPathInfo() ?: '/';
+        $options = $this->configurationResolver->getOptions($request);
 
-        foreach ($this->paths as $path => $options) {
-            if (preg_match('{'.$path.'}i', $currentPath)) {
-                $options = array_merge($this->defaults, $options);
-
-                // perform preflight checks
-                if ('OPTIONS' === $request->getMethod()) {
-                    $event->setResponse($this->getPreflightResponse($request, $options));
-                    return;
-                }
-
-                if (!$this->checkOrigin($request, $options)) {
-                    $response = new Response('', 403, array('Access-Control-Allow-Origin' => 'null'));
-                    $event->setResponse($response);
-                    return;
-                }
-
-                $this->dispatcher->addListener('kernel.response', array($this, 'onKernelResponse'));
-                $this->options = $options;
-                return;
-            }
+        // perform preflight checks
+        if ('OPTIONS' === $request->getMethod()) {
+            $event->setResponse($this->getPreflightResponse($request, $options));
+            return;
         }
+
+        if (!$this->checkOrigin($request, $options)) {
+            $response = new Response('', 403, array('Access-Control-Allow-Origin' => 'null'));
+            $event->setResponse($response);
+            return;
+        }
+
+        $this->dispatcher->addListener('kernel.response', array($this, 'onKernelResponse'));
+        $this->options = $options;
     }
 
     public function onKernelResponse(FilterResponseEvent $event)
