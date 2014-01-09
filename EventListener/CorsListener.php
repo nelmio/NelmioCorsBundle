@@ -77,7 +77,7 @@ class CorsListener
                         }
                     }
                     if(!$found) {
-                        return;
+                        continue;
                     }
                 }
 
