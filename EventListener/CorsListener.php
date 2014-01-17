@@ -63,6 +63,10 @@ class CorsListener
 
         $options = $this->configurationResolver->getOptions($request);
 
+        if (!$options) {
+            return;
+        }
+
         // perform preflight checks
         if ('OPTIONS' === $request->getMethod()) {
             $event->setResponse($this->getPreflightResponse($request, $options));
