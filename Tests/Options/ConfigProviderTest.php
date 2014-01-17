@@ -16,9 +16,9 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
 {
     protected $defaultOptions = array(
         'allow_credentials' => false,
-        'allow_origin' => array( 'http://one.example.com' ),
+        'allow_origin' => array('http://one.example.com'),
         'allow_headers' => false,
-        'allow_methods' => array( 'GET' ),
+        'allow_methods' => array('GET'),
         'expose_headers' => array(),
         'max_age' => 0,
         'hosts' => array(),
@@ -26,19 +26,19 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
 
     protected $pathOptions = array(
         'allow_credentials' => true,
-        'allow_origin' => array( 'http://two.example.com' ),
+        'allow_origin' => array('http://two.example.com'),
         'allow_headers' => true,
-        'allow_methods' => array( 'PUT', 'POST' ),
-        'expose_headers' => array( 'X-CorsTest' ),
+        'allow_methods' => array('PUT', 'POST'),
+        'expose_headers' => array('X-CorsTest'),
         'max_age' => 120,
         'hosts' => array(),
     );
 
     protected $domainMatchOptions = array(
         'allow_credentials' => true,
-        'allow_origin' => array( 'http://domainmatch.example.com' ),
+        'allow_origin' => array('http://domainmatch.example.com'),
         'allow_headers' => true,
-        'allow_methods' => array( 'PUT', 'POST' ),
+        'allow_methods' => array('PUT', 'POST'),
         'expose_headers' => array(),
         'max_age' => 160,
         'hosts' => array('^test\.', '\.example\.org$'),
@@ -46,10 +46,10 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
 
     protected $noDomainMatchOptions = array(
         'allow_credentials' => true,
-        'allow_origin' => array( 'http://nomatch.example.com' ),
+        'allow_origin' => array('http://nomatch.example.com'),
         'allow_headers' => true,
-        'allow_methods' => array( 'PUT', 'POST' ),
-        'expose_headers' => array( 'X-CorsTest' ),
+        'allow_methods' => array('PUT', 'POST'),
+        'expose_headers' => array('X-CorsTest'),
         'max_age' => 180,
         'hosts' => array('^nomatch\.'),
     );
@@ -116,10 +116,10 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
                 '^/test/' => $this->pathOptions,
                 '^/othertest/' => array(
                     'allow_credentials' => true,
-                    'allow_origin' => array( 'http://nope.example.com' ),
+                    'allow_origin' => array('http://nope.example.com'),
                     'allow_headers' => true,
-                    'allow_methods' => array( 'COPY' ),
-                    'expose_headers' => array( 'X-Cors-Nope' ),
+                    'allow_methods' => array('COPY'),
+                    'expose_headers' => array('X-Cors-Nope'),
                     'max_age' => 42
                 )
             ),
