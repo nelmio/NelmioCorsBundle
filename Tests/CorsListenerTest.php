@@ -42,6 +42,7 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
 
         $resolver = m::mock('Nelmio\CorsBundle\Options\ResolverInterface');
         $resolver->shouldReceive('getOptions')->andReturn($mergedOptions);
+
         return new CorsListener($dispatcher, $resolver);
     }
 

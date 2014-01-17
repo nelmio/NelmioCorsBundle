@@ -66,12 +66,14 @@ class CorsListener
         // perform preflight checks
         if ('OPTIONS' === $request->getMethod()) {
             $event->setResponse($this->getPreflightResponse($request, $options));
+
             return;
         }
 
         if (!$this->checkOrigin($request, $options)) {
             $response = new Response('', 403, array('Access-Control-Allow-Origin' => 'null'));
             $event->setResponse($response);
+
             return;
         }
 
@@ -119,6 +121,7 @@ class CorsListener
 
         if (!$this->checkOrigin($request, $options)) {
             $response->headers->set('Access-Control-Allow-Origin', 'null');
+
             return $response;
         }
 
@@ -127,6 +130,7 @@ class CorsListener
         // check request method
         if (!in_array($request->headers->get('Access-Control-Request-Method'), $options['allow_methods'], true)) {
             $response->setStatusCode(405);
+
             return $response;
         }
 

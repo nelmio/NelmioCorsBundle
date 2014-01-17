@@ -43,12 +43,13 @@ class CorsConfigurationProviderPass implements CompilerPassInterface
 
     /**
      * Transforms a two-dimensions array of providers, indexed by priority, into a flat array of Reference objects
-     * @param array $providersByPriority
+     * @param  array       $providersByPriority
      * @return Reference[]
      */
     protected function sortProviders(array $providersByPriority)
     {
         ksort($providersByPriority);
+
         return call_user_func_array('array_merge', $providersByPriority);
     }
 }

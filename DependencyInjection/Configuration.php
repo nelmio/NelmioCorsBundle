@@ -72,10 +72,11 @@ class Configuration implements ConfigurationInterface
 
         $node
             ->beforeNormalization()
-                ->always(function($v) {
+                ->always(function ($v) {
                     if ($v === '*') {
                         return array('*');
                     }
+
                     return $v;
                 })
             ->end()
@@ -91,10 +92,11 @@ class Configuration implements ConfigurationInterface
 
         $node
             ->beforeNormalization()
-                ->always(function($v) {
+                ->always(function ($v) {
                     if ($v === '*') {
                         return array('*');
                     }
+
                     return $v;
                 })
             ->end()

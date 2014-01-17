@@ -36,6 +36,7 @@ class ConfigProvider implements ProviderInterface
                 return array_merge($this->defaults, $options);
             }
         }
+
         return $this->defaults;
     }
 }
