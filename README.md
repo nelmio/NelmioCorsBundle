@@ -33,15 +33,22 @@ seconds.
             allow_methods: []
             expose_headers: []
             max_age: 0
+            hosts: []
         paths:
             '^/api/':
                 allow_origin: ['*']
                 allow_headers: ['X-Custom-Auth']
                 allow_methods: ['POST', 'PUT', 'GET', 'DELETE']
                 max_age: 3600
+            '^/':
+                allow_origin: ['*']
+                allow_headers: ['X-Custom-Auth']
+                allow_methods: ['POST', 'PUT', 'GET', 'DELETE']
+                max_age: 3600
+                hosts: ['^api\.']
 
 `allow_origin` and `allow_headers` can be set to `*` to accept any value, the
-allowed methods however have to be explicitly listed.
+allowed methods however have to be explicitly listed. `paths` must contain at least one item.
 
 ## Installation (Symfony 2.1+)
 

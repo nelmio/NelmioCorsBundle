@@ -33,7 +33,20 @@ class ConfigProvider implements ProviderInterface
         $uri = $request->getPathInfo() ?: '/';
         foreach ($this->paths as $pathRegexp => $options) {
             if (preg_match('{'.$pathRegexp.'}i', $uri)) {
-                return array_merge($this->defaults, $options);
+                $options = array_merge($this->defaults, $options);
+
+                // skip if the host is not matching
+                if (count($options['hosts']) > 0) {
+                    foreach ($options['hosts'] as $hostRegexp) {
+                        if (preg_match('{'.$hostRegexp.'}i', $request->getHost())) {
+                            return $options;
+                        }
+                    }
+
+                    continue;
+                }
+
+                return $options;
             }
         }
 

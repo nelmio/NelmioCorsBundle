@@ -40,6 +40,7 @@ class Configuration implements ConfigurationInterface
                     ->append($this->getAllowMethods())
                     ->append($this->getExposeHeaders())
                     ->append($this->getMaxAge())
+                    ->append($this->getHosts())
                 ->end()
 
                 ->arrayNode('paths')
@@ -51,6 +52,7 @@ class Configuration implements ConfigurationInterface
                         ->append($this->getAllowMethods())
                         ->append($this->getExposeHeaders())
                         ->append($this->getMaxAge())
+                        ->append($this->getHosts())
                     ->end()
                 ->end()
             ;
@@ -136,6 +138,15 @@ class Configuration implements ConfigurationInterface
                 ->thenInvalid('max_age must be an integer (seconds)')
             ->end()
         ;
+
+        return $node;
+    }
+
+    private function getHosts()
+    {
+        $node = new ArrayNodeDefinition('hosts');
+
+        $node->prototype('scalar')->end();
 
         return $node;
     }

@@ -20,7 +20,8 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
         'allow_headers' => false,
         'allow_methods' => array( 'GET' ),
         'expose_headers' => array(),
-        'max_age' => 0
+        'max_age' => 0,
+        'hosts' => array(),
     );
 
     protected $pathOptions = array(
@@ -29,7 +30,28 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
         'allow_headers' => true,
         'allow_methods' => array( 'PUT', 'POST' ),
         'expose_headers' => array( 'X-CorsTest' ),
-        'max_age' => 120
+        'max_age' => 120,
+        'hosts' => array(),
+    );
+
+    protected $domainMatchOptions = array(
+        'allow_credentials' => true,
+        'allow_origin' => array( 'http://domainmatch.example.com' ),
+        'allow_headers' => true,
+        'allow_methods' => array( 'PUT', 'POST' ),
+        'expose_headers' => array(),
+        'max_age' => 160,
+        'hosts' => array('^test\.', '\.example\.org$'),
+    );
+
+    protected $noDomainMatchOptions = array(
+        'allow_credentials' => true,
+        'allow_origin' => array( 'http://nomatch.example.com' ),
+        'allow_headers' => true,
+        'allow_methods' => array( 'PUT', 'POST' ),
+        'expose_headers' => array( 'X-CorsTest' ),
+        'max_age' => 180,
+        'hosts' => array('^nomatch\.'),
     );
 
     public function testGetOptionsForPathDefault()
@@ -52,6 +74,36 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testGetOptionsMatchingDomain()
+    {
+        $provider = $this->getProvider();
+
+        self::assertEquals(
+            $this->domainMatchOptions,
+            $provider->getOptions(Request::create('/test/match', 'OPTIONS', array(), array(), array(), array('HTTP_HOST' => 'test.example.com')))
+        );
+    }
+
+    public function testGetOptionsMatchingDomain2()
+    {
+        $provider = $this->getProvider();
+
+        self::assertEquals(
+            $this->domainMatchOptions,
+            $provider->getOptions(Request::create('/test/match', 'OPTIONS', array(), array(), array(), array('HTTP_HOST' => 'foo.example.org')))
+        );
+    }
+
+    public function testGetOptionsNotMatchingDomain()
+    {
+        $provider = $this->getProvider();
+
+        self::assertEquals(
+            $this->pathOptions,
+            $provider->getOptions(Request::create('/test/nomatch', 'OPTIONS', array(), array(), array(), array('HTTP_HOST' => 'example.com')))
+        );
+    }
+
     /**
      * @return ConfigProvider
      */
@@ -59,6 +111,8 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
     {
         return new ConfigProvider(
             array(
+                '^/test/match' => $this->domainMatchOptions,
+                '^/test/nomatch' => $this->noDomainMatchOptions,
                 '^/test/' => $this->pathOptions,
                 '^/othertest/' => array(
                     'allow_credentials' => true,
