@@ -1,3 +1,7 @@
+### 1.3.0 (2014-02-06)
+
+  * Added support for host-based configuration of the bundle
+
 ### 1.2.0 (2013-10-29)
 
   * Bumped symfony dependency to 2.1.0+
