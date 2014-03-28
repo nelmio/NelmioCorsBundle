@@ -121,6 +121,7 @@ class CorsListener
         }
         if ($options['max_age']) {
             $response->headers->set('Access-Control-Max-Age', $options['max_age']);
+            $response->setMaxAge($options['max_age']);
         }
 
         if (!$this->checkOrigin($request, $options)) {
