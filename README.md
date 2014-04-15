@@ -50,6 +50,11 @@ seconds.
 `allow_origin` and `allow_headers` can be set to `*` to accept any value, the
 allowed methods however have to be explicitly listed. `paths` must contain at least one item.
 
+> **Note:** If you allow POST methods and have 
+> [http method overriding](http://symfony.com/doc/current/reference/configuration/framework.html#http-method-override)
+> enabled in the framework, it will enable the API users to perform PUT and DELETE 
+> requests as well.
+
 ## Installation (Symfony 2.1+)
 
 Require the `nelmio/cors-bundle` package in your composer.json and update your dependencies.
