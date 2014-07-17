@@ -15,7 +15,7 @@
         }
     ],
     "require": {
-        "symfony/framework-bundle": "~2.1"
+        "symfony/framework-bundle": "~2.2"
     },
     "require-dev": {
         "mockery/mockery": "dev-master",

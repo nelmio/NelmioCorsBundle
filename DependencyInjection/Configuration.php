@@ -45,6 +45,7 @@ class Configuration implements ConfigurationInterface
 
                 ->arrayNode('paths')
                     ->useAttributeAsKey('path')
+                    ->normalizeKeys(false)
                     ->prototype('array')
                         ->append($this->getAllowCredentials())
                         ->append($this->getAllowOrigin())
