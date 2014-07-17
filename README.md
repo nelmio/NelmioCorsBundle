@@ -55,7 +55,7 @@ allowed methods however have to be explicitly listed. `paths` must contain at le
 > enabled in the framework, it will enable the API users to perform PUT and DELETE 
 > requests as well.
 
-## Installation (Symfony 2.1+)
+## Installation (Symfony 2.2+)
 
 Require the `nelmio/cors-bundle` package in your composer.json and update your dependencies.
 
