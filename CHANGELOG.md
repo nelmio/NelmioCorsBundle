@@ -1,3 +1,8 @@
+### 1.3.1 (2014-07-21)
+
+  * Fixed path key normalization to allow dashes in paths
+  * Fixed HTTP method case folding to support clients that send non-uppercased method names
+
 ### 1.3.0 (2014-02-06)
 
   * Added support for host-based configuration of the bundle
