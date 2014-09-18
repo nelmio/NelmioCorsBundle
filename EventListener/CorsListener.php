@@ -74,13 +74,6 @@ class CorsListener
             return;
         }
 
-        if (!$this->checkOrigin($request, $options)) {
-            $response = new Response('', 403, array('Access-Control-Allow-Origin' => 'null'));
-            $event->setResponse($response);
-
-            return;
-        }
-
         $this->dispatcher->addListener('kernel.response', array($this, 'onKernelResponse'));
         $this->options = $options;
     }

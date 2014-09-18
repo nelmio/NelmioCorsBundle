@@ -1,3 +1,7 @@
+### 1.3.2 (2014-09-18)
+
+  * Removed 403 responses on non-OPTIONS requests that have an invalid origin header
+
 ### 1.3.1 (2014-07-21)
 
   * Fixed path key normalization to allow dashes in paths
