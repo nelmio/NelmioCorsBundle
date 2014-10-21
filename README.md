@@ -13,6 +13,24 @@ this [image](http://www.html5rocks.com/static/images/cors_server_flowchart.png).
 * Handles CORS pre-flight OPTIONS requests
 * Adds CORS headers to your responses
 
+## Installation
+
+Require the `nelmio/cors-bundle` package in your composer.json and update your dependencies.
+
+    $ composer require nelmio/cors-bundle
+
+Add the NelmioCorsBundle to your application's kernel:
+
+    public function registerBundles()
+    {
+        $bundles = array(
+            ...
+            new Nelmio\CorsBundle\NelmioCorsBundle(),
+            ...
+        );
+        ...
+    }
+
 ## Configuration
 
 The `defaults` are the default values applied to all the `paths` that match,
@@ -54,48 +72,6 @@ allowed methods however have to be explicitly listed. `paths` must contain at le
 > [http method overriding](http://symfony.com/doc/current/reference/configuration/framework.html#http-method-override)
 > enabled in the framework, it will enable the API users to perform PUT and DELETE 
 > requests as well.
-
-## Installation (Symfony 2.2+)
-
-Require the `nelmio/cors-bundle` package in your composer.json and update your dependencies.
-
-    $ composer require nelmio/cors-bundle:~1.0
-
-Add the NelmioCorsBundle to your application's kernel:
-
-    public function registerBundles()
-    {
-        $bundles = array(
-            ...
-            new Nelmio\CorsBundle\NelmioCorsBundle(),
-            ...
-        );
-        ...
-    }
-
-## Installation (Symfony 2.0)
-
-Put the NelmioCorsBundle into the `vendor/bundles/Nelmio` directory:
-
-    $ git clone git://github.com/nelmio/NelmioCorsBundle.git vendor/bundles/Nelmio/CorsBundle
-
-Register the `Nelmio` namespace in your project's autoload script (app/autoload.php):
-
-    $loader->registerNamespaces(array(
-        'Nelmio'                        => __DIR__.'/../vendor/bundles',
-    ));
-
-Add the NelmioCorsBundle to your application's kernel:
-
-    public function registerBundles()
-    {
-        $bundles = array(
-            ...
-            new Nelmio\CorsBundle\NelmioCorsBundle(),
-            ...
-        );
-        ...
-    }
 
 ## License
 
