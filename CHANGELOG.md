@@ -1,3 +1,7 @@
+### 1.3.3 (2014-12-10)
+
+  * Fixed a security regression in 1.3.2 that allowed GET requests to be executed from any domain
+
 ### 1.3.2 (2014-09-18)
 
   * Removed 403 responses on non-OPTIONS requests that have an invalid origin header

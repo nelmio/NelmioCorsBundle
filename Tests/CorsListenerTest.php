@@ -132,8 +132,27 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
         $req->headers->set('Host', 'example.com');
         $req->headers->set('Origin', 'http://example.com');
 
-        $callback = null;
         $dispatcher = m::mock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+
+        $event = new GetResponseEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST);
+        $this->getListener($dispatcher, $options)->onKernelRequest($event);
+
+        $this->assertNull($event->getResponse());
+    }
+
+    public function testRequestWithOriginButNo()
+    {
+        // Request with same host as origin
+        $options = array(
+            'allow_origin' => array(),
+        );
+
+        $req = Request::create('/foo', 'GET');
+        $req->headers->set('Host', 'example.com');
+        $req->headers->set('Origin', 'http://evil.com');
+
+        $dispatcher = m::mock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $dispatcher->shouldReceive('addListener')->times(0);
 
         $event = new GetResponseEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST);
         $this->getListener($dispatcher, $options)->onKernelRequest($event);

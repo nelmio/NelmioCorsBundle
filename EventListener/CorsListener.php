@@ -74,6 +74,10 @@ class CorsListener
             return;
         }
 
+        if (!$this->checkOrigin($request, $options)) {
+            return;
+        }
+
         $this->dispatcher->addListener('kernel.response', array($this, 'onKernelResponse'));
         $this->options = $options;
     }
