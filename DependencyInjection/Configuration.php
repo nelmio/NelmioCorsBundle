@@ -41,6 +41,7 @@ class Configuration implements ConfigurationInterface
                     ->append($this->getExposeHeaders())
                     ->append($this->getMaxAge())
                     ->append($this->getHosts())
+                    ->append($this->getOriginRegex())
                 ->end()
 
                 ->arrayNode('paths')
@@ -54,6 +55,7 @@ class Configuration implements ConfigurationInterface
                         ->append($this->getExposeHeaders())
                         ->append($this->getMaxAge())
                         ->append($this->getHosts())
+                        ->append($this->getOriginRegex())
                     ->end()
                 ->end()
             ;
@@ -148,6 +150,14 @@ class Configuration implements ConfigurationInterface
         $node = new ArrayNodeDefinition('hosts');
 
         $node->prototype('scalar')->end();
+
+        return $node;
+    }
+
+    private function getOriginRegex()
+    {
+        $node = new BooleanNodeDefinition('origin_regex');
+        $node->defaultFalse();
 
         return $node;
     }

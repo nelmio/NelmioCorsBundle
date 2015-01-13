@@ -54,6 +54,17 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
         'hosts' => array('^nomatch\.'),
     );
 
+    protected $originRegexOptions = array(
+        'allow_credentials' => true,
+        'allow_origin' => array('^http://(.*)\.example\.com'),
+        'origin_regex' => true,
+        'allow_headers' => true,
+        'allow_methods' => array('PUT', 'POST'),
+        'expose_headers' => array(),
+        'max_age' => 0,
+        'hosts' => array(),
+    );
+
     public function testGetOptionsForPathDefault()
     {
         $provider = $this->getProvider();
@@ -104,6 +115,16 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testGetOptionsRegexOrigin()
+    {
+        $provider = $this->getProvider();
+
+        self::assertEquals(
+            $this->originRegexOptions,
+            $provider->getOptions(Request::create('/test/regex'))
+        );
+    }
+
     /**
      * @return ConfigProvider
      */
@@ -111,6 +132,7 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
     {
         return new ConfigProvider(
             array(
+                '^/test/regex' => $this->originRegexOptions,
                 '^/test/match' => $this->domainMatchOptions,
                 '^/test/nomatch' => $this->noDomainMatchOptions,
                 '^/test/' => $this->pathOptions,
