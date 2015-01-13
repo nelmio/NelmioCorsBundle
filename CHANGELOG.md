@@ -1,3 +1,7 @@
+### 1.4.0 (2015-01-13)
+
+  * Added an `origin_regex` option to allow defining origins based on regular expressions
+
 ### 1.3.3 (2014-12-10)
 
   * Fixed a security regression in 1.3.2 that allowed GET requests to be executed from any domain
