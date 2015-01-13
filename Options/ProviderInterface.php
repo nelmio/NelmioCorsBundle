@@ -28,6 +28,7 @@ interface ProviderInterface
      * - bool allow_credentials
      * - bool allow_origin
      * - bool allow_headers
+     * - bool origin_regex
      * - array allow_methods
      * - array expose_headers
      * - int max_age

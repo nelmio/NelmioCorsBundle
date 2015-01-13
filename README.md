@@ -52,6 +52,7 @@ seconds.
             expose_headers: []
             max_age: 0
             hosts: []
+            origin_regex: false
         paths:
             '^/api/':
                 allow_origin: ['*']
@@ -59,7 +60,8 @@ seconds.
                 allow_methods: ['POST', 'PUT', 'GET', 'DELETE']
                 max_age: 3600
             '^/':
-                allow_origin: ['*']
+                origin_regex: true
+                allow_origin: ['^http://localhost:[0-9]+']
                 allow_headers: ['X-Custom-Auth']
                 allow_methods: ['POST', 'PUT', 'GET', 'DELETE']
                 max_age: 3600
@@ -67,6 +69,8 @@ seconds.
 
 `allow_origin` and `allow_headers` can be set to `*` to accept any value, the
 allowed methods however have to be explicitly listed. `paths` must contain at least one item.
+
+If `origin_regex` is set, `allow_origin` accepts regular expressions to match the origin.
 
 > **Note:** If you allow POST methods and have 
 > [http method overriding](http://symfony.com/doc/current/reference/configuration/framework.html#http-method-override)

@@ -37,6 +37,7 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
                 'allow_methods' => array(),
                 'max_age' => 0,
                 'hosts' => array(),
+                'origin_regex' => false,
             ),
             $options
         );
