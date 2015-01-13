@@ -70,7 +70,8 @@ seconds.
 `allow_origin` and `allow_headers` can be set to `*` to accept any value, the
 allowed methods however have to be explicitly listed. `paths` must contain at least one item.
 
-If `origin_regex` is set, `allow_origin` accepts regular expressions to match the origin.
+If `origin_regex` is set, `allow_origin` muts be a list of regular expressions matching
+allowed origins. Remember to use `^` and `$` to clearly define the boundaries of the regex.
 
 > **Note:** If you allow POST methods and have 
 > [http method overriding](http://symfony.com/doc/current/reference/configuration/framework.html#http-method-override)
