@@ -5,7 +5,7 @@
 The NelmioCorsBundle allows you to send [Cross-Origin Resource Sharing](http://enable-cors.org/)
 headers with ACL-style per-url configuration.
 
-If you want to have have a global overview of CORS workflow, you can  browse
+If you want to have a global overview of CORS workflow, you can browse
 this [image](http://www.html5rocks.com/static/images/cors_server_flowchart.png).
 
 ## Features
