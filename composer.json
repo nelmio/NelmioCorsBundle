@@ -18,7 +18,7 @@
         "symfony/framework-bundle": "~2.2"
     },
     "require-dev": {
-        "mockery/mockery": "dev-master",
+        "mockery/mockery": "0.9.*",
         "matthiasnoback/symfony-dependency-injection-test": "0.2.*"
     },
     "autoload": {
