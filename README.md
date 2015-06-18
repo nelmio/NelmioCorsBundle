@@ -3,14 +3,14 @@
 ## About
 
 The NelmioCorsBundle allows you to send [Cross-Origin Resource Sharing](http://enable-cors.org/)
-headers with ACL-style per-url configuration.
+headers with ACL-style per-URL configuration.
 
 If you want to have a global overview of CORS workflow, you can browse
 this [image](http://www.html5rocks.com/static/images/cors_server_flowchart.png).
 
 ## Features
 
-* Handles CORS pre-flight OPTIONS requests
+* Handles CORS preflight OPTIONS requests
 * Adds CORS headers to your responses
 
 ## Installation
@@ -70,11 +70,11 @@ seconds.
 `allow_origin` and `allow_headers` can be set to `*` to accept any value, the
 allowed methods however have to be explicitly listed. `paths` must contain at least one item.
 
-If `origin_regex` is set, `allow_origin` muts be a list of regular expressions matching
+If `origin_regex` is set, `allow_origin` must be a list of regular expressions matching
 allowed origins. Remember to use `^` and `$` to clearly define the boundaries of the regex.
 
 > **Note:** If you allow POST methods and have 
-> [http method overriding](http://symfony.com/doc/current/reference/configuration/framework.html#http-method-override)
+> [HTTP method overriding](http://symfony.com/doc/current/reference/configuration/framework.html#http-method-override)
 > enabled in the framework, it will enable the API users to perform PUT and DELETE 
 > requests as well.
 
