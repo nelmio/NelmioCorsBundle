@@ -8,13 +8,13 @@
  */
 namespace Nelmio\Tests\DependencyInjection;
 
-use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractCompilerPassTest;
+use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractCompilerPassTestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Nelmio\CorsBundle\DependencyInjection\Compiler\CorsConfigurationProviderPass;
 use Symfony\Component\DependencyInjection\Reference;
 
-class CorsConfigurationProviderPassTest extends AbstractCompilerPassTest
+class CorsConfigurationProviderPassTest extends AbstractCompilerPassTestCase
 {
     protected function registerCompilerPass(ContainerBuilder $container)
     {
