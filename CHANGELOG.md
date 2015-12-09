@@ -1,3 +1,7 @@
+### 1.4.1 (2015-12-09)
+
+  * Fixed requirements to allow Symfony3
+
 ### 1.4.0 (2015-01-13)
 
   * Added an `origin_regex` option to allow defining origins based on regular expressions
