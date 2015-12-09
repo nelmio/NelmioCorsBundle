@@ -19,7 +19,7 @@
     },
     "require-dev": {
         "mockery/mockery": "0.9.*",
-        "matthiasnoback/symfony-dependency-injection-test": "0.2.*"
+        "matthiasnoback/symfony-dependency-injection-test": "^0.7.6"
     },
     "autoload": {
         "psr-0": { "Nelmio\\CorsBundle": "" }
