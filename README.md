@@ -21,15 +21,17 @@ Require the `nelmio/cors-bundle` package in your composer.json and update your d
 
 Add the NelmioCorsBundle to your application's kernel:
 
+```php
     public function registerBundles()
     {
         $bundles = array(
-            ...
+            // ...
             new Nelmio\CorsBundle\NelmioCorsBundle(),
-            ...
+            // ...
         );
-        ...
+        // ...
     }
+````
 
 ## Configuration
 
@@ -43,6 +45,7 @@ requests from any origin on `/api/`. One custom header and some HTTP methods
 are defined as allowed as well. Preflight requests can be cached for 3600
 seconds.
 
+```yaml
     nelmio_cors:
         defaults:
             allow_credentials: false
@@ -66,6 +69,7 @@ seconds.
                 allow_methods: ['POST', 'PUT', 'GET', 'DELETE']
                 max_age: 3600
                 hosts: ['^api\.']
+```
 
 `allow_origin` and `allow_headers` can be set to `*` to accept any value, the
 allowed methods however have to be explicitly listed. `paths` must contain at least one item.
