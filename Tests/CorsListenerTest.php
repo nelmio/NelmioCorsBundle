@@ -26,7 +26,7 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
         m::close();
     }
 
-    public function getListener($dispatcher, array $options = array())
+    public function getListener(array $options = array())
     {
         $mergedOptions = array_merge(
             array(
@@ -45,7 +45,7 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
         $resolver = m::mock('Nelmio\CorsBundle\Options\ResolverInterface');
         $resolver->shouldReceive('getOptions')->andReturn($mergedOptions);
 
-        return new CorsListener($dispatcher, $resolver);
+        return new CorsListener($resolver);
     }
 
     public function testPreflightedRequest()
@@ -62,9 +62,8 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
         $req->headers->set('Access-Control-Request-Method', 'POST');
         $req->headers->set('Access-Control-Request-Headers', 'Foo, BAR');
 
-        $dispatcher = m::mock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
         $event = new GetResponseEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST);
-        $this->getListener($dispatcher, $options)->onKernelRequest($event);
+        $this->getListener($options)->onKernelRequest($event);
         $resp = $event->getResponse();
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $resp);
         $this->assertEquals(200, $resp->getStatusCode());
@@ -78,18 +77,10 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
         $req->headers->set('Foo', 'huh');
         $req->headers->set('BAR', 'lala');
 
-        $callback = null;
-        $dispatcher = m::mock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
-        $dispatcher->shouldReceive('addListener')->once()
-            ->with('kernel.response', m::type('callable'))
-            ->andReturnUsing(function ($cb) use (&$callback) {
-                $callback = $cb;
-            });
-
         $event = new GetResponseEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST);
-        $this->getListener($dispatcher, $options)->onKernelRequest($event);
+        $this->getListener($options)->onKernelRequest($event);
         $event = new FilterResponseEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST, new Response());
-        $this->getListener($dispatcher, $options)->onKernelResponse($event);
+        $this->getListener($options)->onKernelResponse($event);
         $resp = $event->getResponse();
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $resp);
         $this->assertEquals(200, $resp->getStatusCode());
@@ -110,9 +101,8 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
         $req->headers->set('Origin', 'http://example.com');
         $req->headers->set('Access-Control-Request-Method', 'Link');
 
-        $dispatcher = m::mock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
         $event = new GetResponseEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST);
-        $this->getListener($dispatcher, $options)->onKernelRequest($event);
+        $this->getListener($options)->onKernelRequest($event);
         $resp = $event->getResponse();
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $resp);
         $this->assertEquals(200, $resp->getStatusCode());
@@ -120,30 +110,8 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('LINK, PUT, Link', $resp->headers->get('Access-Control-Allow-Methods'));
     }
 
-    public function testSameHostRequest()
-    {
-        // Request with same host as origin
-        $options = array(
-            'allow_origin' => array(),
-            'allow_headers' => array('foo', 'bar'),
-            'allow_methods' => array('POST', 'PUT'),
-        );
-
-        $req = Request::create('/foo', 'POST');
-        $req->headers->set('Host', 'example.com');
-        $req->headers->set('Origin', 'http://example.com');
-
-        $dispatcher = m::mock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
-
-        $event = new GetResponseEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST);
-        $this->getListener($dispatcher, $options)->onKernelRequest($event);
-
-        $this->assertNull($event->getResponse());
-    }
-
     public function testRequestWithOriginButNo()
     {
-        // Request with same host as origin
         $options = array(
             'allow_origin' => array(),
         );
@@ -152,12 +120,9 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
         $req->headers->set('Host', 'example.com');
         $req->headers->set('Origin', 'http://evil.com');
 
-        $dispatcher = m::mock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
-        $dispatcher->shouldReceive('addListener')->times(0);
+        $event = new FilterResponseEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST, new Response());
+        $this->getListener($options)->onKernelResponse($event);
 
-        $event = new GetResponseEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST);
-        $this->getListener($dispatcher, $options)->onKernelRequest($event);
-
-        $this->assertNull($event->getResponse());
+        $this->assertFalse($event->getResponse()->headers->has('Access-Control-Allow-Origin'));
     }
 }

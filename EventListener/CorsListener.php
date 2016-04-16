@@ -11,13 +11,12 @@
 
 namespace Nelmio\CorsBundle\EventListener;
 
-use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Nelmio\CorsBundle\Options\ResolverInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Nelmio\CorsBundle\Options\ResolverInterface;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
  * Adds CORS headers and handles pre-flight requests
@@ -36,15 +35,11 @@ class CorsListener
         'origin',
     );
 
-    protected $dispatcher;
-    protected $options;
-
     /** @var ResolverInterface */
     protected $configurationResolver;
 
-    public function __construct(EventDispatcherInterface $dispatcher, ResolverInterface $configurationResolver)
+    public function __construct(ResolverInterface $configurationResolver)
     {
-        $this->dispatcher = $dispatcher;
         $this->configurationResolver = $configurationResolver;
     }
 
@@ -57,7 +52,7 @@ class CorsListener
         $request = $event->getRequest();
 
         // skip if not a CORS request
-        if (!$request->headers->has('Origin') || $request->headers->get('Origin') == $request->getSchemeAndHttpHost()) {
+        if (!$request->headers->has('Origin')) {
             return;
         }
 
@@ -70,16 +65,7 @@ class CorsListener
         // perform preflight checks
         if ('OPTIONS' === $request->getMethod()) {
             $event->setResponse($this->getPreflightResponse($request, $options));
-
-            return;
         }
-
-        if (!$this->checkOrigin($request, $options)) {
-            return;
-        }
-
-        $this->dispatcher->addListener('kernel.response', array($this, 'onKernelResponse'));
-        $this->options = $options;
     }
 
     public function onKernelResponse(FilterResponseEvent $event)
@@ -88,15 +74,30 @@ class CorsListener
             return;
         }
 
-        $response = $event->getResponse();
         $request = $event->getRequest();
+        $response = $event->getResponse();
+
+        $options = $this->configurationResolver->getOptions($request);
+
+        if (!$options) {
+            return;
+        }
+
+        if ($options['allow_origin'] !== true) {
+            $response->setVary('Origin', false);
+        }
+
+        if (!$this->checkOrigin($request, $options)) {
+            return;
+        }
+
         // add CORS response headers
         $response->headers->set('Access-Control-Allow-Origin', $request->headers->get('Origin'));
-        if ($this->options['allow_credentials']) {
+        if ($options['allow_credentials']) {
             $response->headers->set('Access-Control-Allow-Credentials', 'true');
         }
-        if ($this->options['expose_headers']) {
-            $response->headers->set('Access-Control-Expose-Headers', strtolower(implode(', ', $this->options['expose_headers'])));
+        if ($options['expose_headers']) {
+            $response->headers->set('Access-Control-Expose-Headers', strtolower(implode(', ', $options['expose_headers'])));
         }
     }
 
@@ -121,8 +122,6 @@ class CorsListener
         }
 
         if (!$this->checkOrigin($request, $options)) {
-            $response->headers->set('Access-Control-Allow-Origin', 'null');
-
             return $response;
         }
 
