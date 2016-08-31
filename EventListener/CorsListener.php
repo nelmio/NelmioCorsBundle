@@ -91,7 +91,11 @@ class CorsListener
         $response = $event->getResponse();
         $request = $event->getRequest();
         // add CORS response headers
-        $response->headers->set('Access-Control-Allow-Origin', $request->headers->get('Origin'));
+        $response->headers->set('Access-Control-Allow-Origin',
+            !empty($this->options['forced_allow_origin_value'])
+                ? $this->options['forced_allow_origin_value']
+                : $request->headers->get('Origin')
+        );
         if ($this->options['allow_credentials']) {
             $response->headers->set('Access-Control-Allow-Credentials', 'true');
         }
@@ -126,7 +130,11 @@ class CorsListener
             return $response;
         }
 
-        $response->headers->set('Access-Control-Allow-Origin', $request->headers->get('Origin'));
+        $response->headers->set('Access-Control-Allow-Origin',
+            !empty($options['forced_allow_origin_value'])
+                ? $options['forced_allow_origin_value']
+                : $request->headers->get('Origin')
+        );
 
         // check request method
         if (!in_array(strtoupper($request->headers->get('Access-Control-Request-Method')), $options['allow_methods'], true)) {

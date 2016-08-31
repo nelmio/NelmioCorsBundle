@@ -31,7 +31,7 @@ Add the NelmioCorsBundle to your application's kernel:
         );
         // ...
     }
-````
+```
 
 ## Configuration
 
@@ -56,6 +56,7 @@ seconds.
             max_age: 0
             hosts: []
             origin_regex: false
+            forced_allow_origin_value: ~
         paths:
             '^/api/':
                 allow_origin: ['*']
@@ -76,6 +77,14 @@ allowed methods however have to be explicitly listed. `paths` must contain at le
 
 If `origin_regex` is set, `allow_origin` must be a list of regular expressions matching
 allowed origins. Remember to use `^` and `$` to clearly define the boundaries of the regex.
+
+By default, the `Access-Control-Allow-Origin` response header value is 
+the `Origin` request header value (if it matches the rules you've defined with `allow_origin`),
+so it should be fine for most of use cases. If it's not, you can override this behavior 
+by setting the exact value you want using `forced_allow_origin_value`.
+
+Be aware that even if you set `forced_allow_origin_value` to `*`, if you also set `allow_origin` to `http://example.com`,
+only this specific domain will be allowed to access your resources.
 
 > **Note:** If you allow POST methods and have 
 > [HTTP method overriding](http://symfony.com/doc/current/reference/configuration/framework.html#http-method-override)
