@@ -51,7 +51,7 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
     public function testPreflightedRequest()
     {
         $options = array(
-            'allow_origin' => array(true),
+            'allow_origin' => true,
             'allow_headers' => array('foo', 'bar'),
             'allow_methods' => array('POST', 'PUT'),
         );
@@ -68,7 +68,7 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
         $resp = $event->getResponse();
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $resp);
         $this->assertEquals(200, $resp->getStatusCode());
-        $this->assertEquals('http://example.com', $resp->headers->get('Access-Control-Allow-Origin'));
+        $this->assertEquals('*', $resp->headers->get('Access-Control-Allow-Origin'));
         $this->assertEquals('POST, PUT', $resp->headers->get('Access-Control-Allow-Methods'));
         $this->assertEquals('foo, bar', $resp->headers->get('Access-Control-Allow-Headers'));
 
@@ -93,7 +93,7 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
         $resp = $event->getResponse();
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $resp);
         $this->assertEquals(200, $resp->getStatusCode());
-        $this->assertEquals('http://example.com', $resp->headers->get('Access-Control-Allow-Origin'));
+        $this->assertEquals('*', $resp->headers->get('Access-Control-Allow-Origin'));
         $this->assertEquals(null, $resp->headers->get('Access-Control-Allow-Methods'));
         $this->assertEquals(null, $resp->headers->get('Access-Control-Allow-Headers'));
     }
@@ -101,7 +101,7 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
     public function testPreflightedRequestLinkFirefox()
     {
         $options = array(
-            'allow_origin' => array(true),
+            'allow_origin' => true,
             'allow_methods' => array('LINK', 'PUT'),
         );
 
@@ -116,7 +116,7 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
         $resp = $event->getResponse();
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $resp);
         $this->assertEquals(200, $resp->getStatusCode());
-        $this->assertEquals('http://example.com', $resp->headers->get('Access-Control-Allow-Origin'));
+        $this->assertEquals('*', $resp->headers->get('Access-Control-Allow-Origin'));
         $this->assertEquals('LINK, PUT, Link', $resp->headers->get('Access-Control-Allow-Methods'));
     }
 
