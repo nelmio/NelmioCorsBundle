@@ -91,7 +91,15 @@ class CorsListener
         $response = $event->getResponse();
         $request = $event->getRequest();
         // add CORS response headers
-        $response->headers->set('Access-Control-Allow-Origin', $request->headers->get('Origin'));
+
+        //Only provide the Access-Control-Allow-Origin response header matching the client's request
+        //if the client's Origin has been white-listed
+        $options = $this->configurationResolver->getOptions($request);
+
+        if ( $this->checkOrigin($request, $options) ) {
+            $response->headers->set('Access-Control-Allow-Origin', $request->headers->get('Origin'));
+        }
+
         if ($this->options['allow_credentials']) {
             $response->headers->set('Access-Control-Allow-Credentials', 'true');
         }
