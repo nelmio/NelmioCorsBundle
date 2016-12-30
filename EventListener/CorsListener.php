@@ -114,7 +114,10 @@ class CorsListener
             $headers = $options['allow_headers'] === true
                 ? $request->headers->get('Access-Control-Request-Headers')
                 : implode(', ', $options['allow_headers']);
-            $response->headers->set('Access-Control-Allow-Headers', $headers);
+
+            if ($headers) {
+                $response->headers->set('Access-Control-Allow-Headers', $headers);
+            }
         }
         if ($options['max_age']) {
             $response->headers->set('Access-Control-Max-Age', $options['max_age']);
