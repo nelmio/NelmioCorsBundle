@@ -14,7 +14,7 @@
         <service id="nelmio_cors.cors_listener" class="%nelmio_cors.cors_listener.class%">
             <argument type="service" id="event_dispatcher" />
             <argument type="service" id="nelmio_cors.options_resolver" />
-            <tag name="kernel.event_listener" event="kernel.request" method="onKernelRequest" priority="10000" />
+            <tag name="kernel.event_listener" event="kernel.request" method="onKernelRequest" priority="250" />
         </service>
 
         <service id="nelmio_cors.options_resolver" class="%nelmio_cors.options_resolver.class%" public="false" />
