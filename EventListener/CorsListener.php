@@ -37,7 +37,6 @@ class CorsListener
     );
 
     protected $dispatcher;
-    protected $options;
 
     /** @var ResolverInterface */
     protected $configurationResolver;
@@ -61,9 +60,7 @@ class CorsListener
             return;
         }
 
-        $options = $this->configurationResolver->getOptions($request);
-
-        if (!$options) {
+        if (!$options = $this->configurationResolver->getOptions($request)) {
             return;
         }
 
@@ -79,7 +76,6 @@ class CorsListener
         }
 
         $this->dispatcher->addListener('kernel.response', array($this, 'onKernelResponse'));
-        $this->options = $options;
     }
 
     public function onKernelResponse(FilterResponseEvent $event)
@@ -88,15 +84,22 @@ class CorsListener
             return;
         }
 
+        if (!$options = $this->configurationResolver->getOptions($request = $event->getRequest())) {
+            return;
+        }
+
         $response = $event->getResponse();
-        $request = $event->getRequest();
         // add CORS response headers
-        $response->headers->set('Access-Control-Allow-Origin', $request->headers->get('Origin'));
-        if ($this->options['allow_credentials']) {
+        $response->headers->set('Access-Control-Allow-Origin',
+            !empty($options['forced_allow_origin_value'])
+                ? $options['forced_allow_origin_value']
+                : $request->headers->get('Origin')
+        );
+        if ($options['allow_credentials']) {
             $response->headers->set('Access-Control-Allow-Credentials', 'true');
         }
-        if ($this->options['expose_headers']) {
-            $response->headers->set('Access-Control-Expose-Headers', strtolower(implode(', ', $this->options['expose_headers'])));
+        if ($options['expose_headers']) {
+            $response->headers->set('Access-Control-Expose-Headers', strtolower(implode(', ', $options['expose_headers'])));
         }
     }
 
@@ -129,7 +132,11 @@ class CorsListener
             return $response;
         }
 
-        $response->headers->set('Access-Control-Allow-Origin', $request->headers->get('Origin'));
+        $response->headers->set('Access-Control-Allow-Origin',
+            !empty($options['forced_allow_origin_value'])
+                ? $options['forced_allow_origin_value']
+                : $request->headers->get('Origin')
+        );
 
         // check request method
         if (!in_array(strtoupper($request->headers->get('Access-Control-Request-Method')), $options['allow_methods'], true)) {
