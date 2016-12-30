@@ -1,3 +1,9 @@
+### 1.5.0 (2016-12-30)
+
+  * Added an `forced_allow_origin_value` option to force the value that is returned, in case you cache responses and can not have the allowed origin automatically set to the Origin header
+  * Fixed `Access-Control-Allow-Headers` being sent even when it was empty
+  * Fixed listener priority down to 250 (This **may be BREAKING** depending on what you do with your own listeners, but should be fine in most cases, just watch out).
+
 ### 1.4.1 (2015-12-09)
 
   * Fixed requirements to allow Symfony3
