@@ -1,3 +1,7 @@
+### 1.5.1 (2017-01-22)
+ 
+  * Fixed `forced_allow_origin_value` to always set the header regardless of CORS, so that requests can properly be cached even if they are not always accessed via CORS
+
 ### 1.5.0 (2016-12-30)
 
   * Added an `forced_allow_origin_value` option to force the value that is returned, in case you cache responses and can not have the allowed origin automatically set to the Origin header
