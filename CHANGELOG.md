@@ -1,3 +1,7 @@
+### 1.5.2 (2017-04-21)
+
+  * Fixed bundle initialization in case paths is empty
+
 ### 1.5.1 (2017-01-22)
  
   * Fixed `forced_allow_origin_value` to always set the header regardless of CORS, so that requests can properly be cached even if they are not always accessed via CORS
