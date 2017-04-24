@@ -1,3 +1,7 @@
+### 1.5.3 (2017-04-24)
+
+  * Fixed regression in 1.5.2
+
 ### 1.5.2 (2017-04-21)
 
   * Fixed bundle initialization in case paths is empty
