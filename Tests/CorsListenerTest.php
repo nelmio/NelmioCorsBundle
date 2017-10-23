@@ -18,8 +18,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 
-class CorsListenerTest extends \PHPUnit_Framework_TestCase
+class CorsListenerTest extends TestCase
 {
     public function tearDown()
     {

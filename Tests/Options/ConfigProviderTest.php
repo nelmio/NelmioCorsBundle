@@ -10,9 +10,10 @@
 namespace Nelmio\CorsBundle\Tests\Options;
 
 use Nelmio\CorsBundle\Options\ConfigProvider;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
-class ConfigProviderTest extends \PHPUnit_Framework_TestCase
+class ConfigProviderTest extends TestCase
 {
     protected $defaultOptions = array(
         'allow_credentials' => false,
