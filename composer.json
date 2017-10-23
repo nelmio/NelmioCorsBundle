@@ -15,7 +15,7 @@
         }
     ],
     "require": {
-        "symfony/framework-bundle": "^2.7 || ^3.0"
+        "symfony/framework-bundle": "^2.7 || ^3.0 || ^4.0"
     },
     "require-dev": {
         "mockery/mockery": "0.9.*",
