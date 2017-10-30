@@ -18,8 +18,9 @@
         "symfony/framework-bundle": "^2.7 || ^3.0"
     },
     "require-dev": {
-        "mockery/mockery": "0.9.*",
-        "matthiasnoback/symfony-dependency-injection-test": "^0.7.6"
+        "matthiasnoback/symfony-dependency-injection-test": "^1.0 || ^2.0",
+        "mockery/mockery": "^0.9 || ^1.0",
+        "symfony/phpunit-bridge": "^2.7 || ^3.0 || ^4.0"
     },
     "autoload": {
         "psr-4": { "Nelmio\\CorsBundle\\": "" },
