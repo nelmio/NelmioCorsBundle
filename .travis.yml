@@ -1,17 +1,37 @@
 language: php
 
+sudo: false
+
 php:
   - 5.4
   - 5.5
   - 5.6
   - 7.0
   - 7.1
+  - 7.2
   - hhvm
 
-sudo: false
+matrix:
+  fast_finish: true
+  include:
+    - php: 5.3
+      dist: precise
+    - php: 7.1
+      env: COMPOSER_FLAGS='--prefer-lowest --prefer-stable'
+    - php: 7.1
+      env: DEPENDENCIES=dev
+
+cache:
+  directories:
+    - $HOME/.composer/cache/files
+    - $HOME/symfony-bridge/.phpunit
 
 before_install:
-  - composer update
+  - if [ "$DEPENDENCIES" = "dev" ]; then composer config minimum-stability dev; fi;
+
+install:
+  - composer update $COMPOSER_FLAGS
+  - vendor/bin/simple-phpunit install
 
 script: |
   if [[ $TRAVIS_PHP_VERSION = 7.* ]]; then
