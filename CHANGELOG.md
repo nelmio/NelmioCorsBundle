@@ -1,3 +1,7 @@
+### 1.5.4 (2017-12-11)
+
+  * Compatibility with Symfony 4
+
 ### 1.5.3 (2017-04-24)
 
   * Fixed regression in 1.5.2
