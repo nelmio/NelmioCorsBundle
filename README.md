@@ -15,7 +15,16 @@ this [image](http://www.html5rocks.com/static/images/cors_server_flowchart.png).
 
 ## Installation
 
-Require the `nelmio/cors-bundle` package in your composer.json and update your dependencies.
+An official [Symfony Flex](https://symfony.com/doc/current/setup/flex.html) recipe
+is available for this bundle.
+To automatically install and configure it run:
+
+    $ composer req cors
+
+You're done!
+
+Alternatively, if you don't use Symfony Flex, require the `nelmio/cors-bundle`
+package in your `composer.json` and update your dependencies.
 
     $ composer require nelmio/cors-bundle
 
@@ -34,6 +43,8 @@ Add the NelmioCorsBundle to your application's kernel:
 ```
 
 ## Configuration
+
+Symfony Flex generates a default configuration in `config/packages/nelmio_cors.yaml`.
 
 The `defaults` are the default values applied to all the `paths` that match,
 unless overriden in a specific URL configuration. If you want them to apply
