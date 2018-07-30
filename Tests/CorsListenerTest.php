@@ -18,8 +18,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 
-class CorsListenerTest extends \PHPUnit_Framework_TestCase
+class CorsListenerTest extends TestCase
 {
     public function tearDown()
     {
@@ -38,6 +39,7 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
                 'max_age' => 0,
                 'hosts' => array(),
                 'origin_regex' => false,
+                'forced_allow_origin_value' => null,
             ),
             $options
         );
@@ -81,7 +83,7 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
         $callback = null;
         $dispatcher = m::mock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
         $dispatcher->shouldReceive('addListener')->once()
-            ->with('kernel.response', m::type('callable'))
+            ->with('kernel.response', m::type('callable'), 0)
             ->andReturnUsing(function ($cb) use (&$callback) {
                 $callback = $cb;
             });
@@ -118,6 +120,59 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(200, $resp->getStatusCode());
         $this->assertEquals('http://example.com', $resp->headers->get('Access-Control-Allow-Origin'));
         $this->assertEquals('LINK, PUT, Link', $resp->headers->get('Access-Control-Allow-Methods'));
+    }
+
+    public function testPreflightedRequestWithForcedAllowOriginValue()
+    {
+        // allow_origin matches origin header
+        // => 'Access-Control-Allow-Origin' should be equal to "forced_allow_origin_value" (i.e. '*')
+        $options = array(
+            'allow_origin' => array(true),
+            'allow_methods' => array('GET'),
+            'forced_allow_origin_value' => '*',
+        );
+
+        $req = Request::create('/foo', 'OPTIONS');
+        $req->headers->set('Origin', 'http://example.com');
+        $req->headers->set('Access-Control-Request-Method', 'GET');
+
+        $dispatcher = m::mock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $dispatcher->shouldReceive('addListener')->once()->with('kernel.response', m::type('callable'), -1);
+
+        $event = new GetResponseEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST);
+        $this->getListener($dispatcher, $options)->onKernelRequest($event);
+        $event = new FilterResponseEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST, $event->getResponse());
+        $this->getListener($dispatcher, $options)->forceAccessControlAllowOriginHeader($event);
+        $resp = $event->getResponse();
+        $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $resp);
+        $this->assertEquals(200, $resp->getStatusCode());
+        $this->assertEquals('*', $resp->headers->get('Access-Control-Allow-Origin'));
+        $this->assertEquals('GET', $resp->headers->get('Access-Control-Allow-Methods'));
+
+        // allow_origin does not match origin header
+        // => 'Access-Control-Allow-Origin' should be equal to "forced_allow_origin_value" (i.e. '*')
+        $options = array(
+            'allow_origin' => array(),
+            'allow_methods' => array('GET'),
+            'forced_allow_origin_value' => '*',
+        );
+
+        $req = Request::create('/foo', 'OPTIONS');
+        $req->headers->set('Origin', 'http://example.com');
+        $req->headers->set('Access-Control-Request-Method', 'GET');
+
+        $dispatcher = m::mock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $dispatcher->shouldReceive('addListener')->once()->with('kernel.response', m::type('callable'), -1);
+
+        $event = new GetResponseEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST);
+        $this->getListener($dispatcher, $options)->onKernelRequest($event);
+        $event = new FilterResponseEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST, $event->getResponse());
+        $this->getListener($dispatcher, $options)->forceAccessControlAllowOriginHeader($event);
+        $resp = $event->getResponse();
+        $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $resp);
+        $this->assertEquals(200, $resp->getStatusCode());
+        $this->assertEquals('*', $resp->headers->get('Access-Control-Allow-Origin'));
+        $this->assertEquals('GET', $resp->headers->get('Access-Control-Allow-Methods'));
     }
 
     public function testSameHostRequest()
@@ -161,6 +216,7 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($event->getResponse());
     }
 
+
     public function testPreflightedRequestWithoutOriginDoesNotReturnOriginHeader()
     {
         $options = array(
@@ -171,7 +227,6 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
         // preflight
         $req = Request::create('/foo', 'OPTIONS');
         $req->headers->set('Origin', 'http://example.com');
-        //$req->headers->set('Access-Control-Request-Method', 'Link');
 
         $dispatcher = m::mock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
         $event = new GetResponseEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST);
@@ -182,5 +237,52 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(200, $resp->getStatusCode());
         $this->assertNull($resp->headers->get('Access-Control-Allow-Origin'));
         $this->assertEquals('OPTIONS, POST', $resp->headers->get('Access-Control-Allow-Methods'));
+    }
+
+    public function testRequestWithForcedAllowOriginValue()
+    {
+        // allow_origin matches origin header
+        // => 'Access-Control-Allow-Origin' should be equal to "forced_allow_origin_value" (i.e. 'http://example.com http://huh-lala.foobar')
+        $options = array(
+            'allow_origin' => array('http://example.com'),
+            'allow_methods' => array('GET'),
+            'forced_allow_origin_value' => 'http://example.com http://huh-lala.foobar',
+        );
+
+        $req = Request::create('/foo', 'GET');
+        $req->headers->set('Origin', 'http://example.com');
+
+        $dispatcher = m::mock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $dispatcher->shouldReceive('addListener')->twice()->with('kernel.response', m::type('callable'), m::type('integer'));
+
+        $event = new GetResponseEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST);
+        $this->getListener($dispatcher, $options)->onKernelRequest($event);
+        $event = new FilterResponseEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST, new Response());
+        $this->getListener($dispatcher, $options)->onKernelResponse($event);
+        $this->getListener($dispatcher, $options)->forceAccessControlAllowOriginHeader($event);
+        $resp = $event->getResponse();
+        $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $resp);
+        $this->assertEquals(200, $resp->getStatusCode());
+        $this->assertEquals('http://example.com http://huh-lala.foobar', $resp->headers->get('Access-Control-Allow-Origin'));
+
+        // request without "Origin" header
+        // => 'Access-Control-Allow-Origin' should be equal to "forced_allow_origin_value" (i.e. '*')
+        $options = array(
+            'forced_allow_origin_value' => '*',
+        );
+
+        $req = Request::create('/foo', 'GET');
+
+        $dispatcher = m::mock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $dispatcher->shouldReceive('addListener')->once()->with('kernel.response', m::type('callable'), -1);
+
+        $event = new GetResponseEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST);
+        $this->getListener($dispatcher, $options)->onKernelRequest($event);
+        $event = new FilterResponseEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST, new Response());
+        $this->getListener($dispatcher, $options)->forceAccessControlAllowOriginHeader($event);
+        $resp = $event->getResponse();
+        $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $resp);
+        $this->assertEquals(200, $resp->getStatusCode());
+        $this->assertEquals('*', $resp->headers->get('Access-Control-Allow-Origin'));
     }
 }

@@ -1,3 +1,25 @@
+### 1.5.4 (2017-12-11)
+
+  * Compatibility with Symfony 4
+
+### 1.5.3 (2017-04-24)
+
+  * Fixed regression in 1.5.2
+
+### 1.5.2 (2017-04-21)
+
+  * Fixed bundle initialization in case paths is empty
+
+### 1.5.1 (2017-01-22)
+ 
+  * Fixed `forced_allow_origin_value` to always set the header regardless of CORS, so that requests can properly be cached even if they are not always accessed via CORS
+
+### 1.5.0 (2016-12-30)
+
+  * Added an `forced_allow_origin_value` option to force the value that is returned, in case you cache responses and can not have the allowed origin automatically set to the Origin header
+  * Fixed `Access-Control-Allow-Headers` being sent even when it was empty
+  * Fixed listener priority down to 250 (This **may be BREAKING** depending on what you do with your own listeners, but should be fine in most cases, just watch out).
+
 ### 1.4.1 (2015-12-09)
 
   * Fixed requirements to allow Symfony3

@@ -12,9 +12,10 @@ namespace Nelmio\CorsBundle\Tests\Options;
 use Nelmio\CorsBundle\Options\ProviderInterface;
 use Nelmio\CorsBundle\Options\Resolver;
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
-class ResolverTest extends \PHPUnit_Framework_TestCase
+class ResolverTest extends TestCase
 {
     /** @var Resolver */
     protected $resolver;

@@ -42,6 +42,7 @@ class Configuration implements ConfigurationInterface
                     ->append($this->getMaxAge())
                     ->append($this->getHosts())
                     ->append($this->getOriginRegex())
+                    ->append($this->getForcedAllowOriginValue())
                 ->end()
 
                 ->arrayNode('paths')
@@ -56,6 +57,7 @@ class Configuration implements ConfigurationInterface
                         ->append($this->getMaxAge())
                         ->append($this->getHosts())
                         ->append($this->getOriginRegex())
+                        ->append($this->getForcedAllowOriginValue())
                     ->end()
                 ->end()
             ;
@@ -158,6 +160,14 @@ class Configuration implements ConfigurationInterface
     {
         $node = new BooleanNodeDefinition('origin_regex');
         $node->defaultFalse();
+
+        return $node;
+    }
+
+    private function getForcedAllowOriginValue()
+    {
+        $node = new ScalarNodeDefinition('forced_allow_origin_value');
+        $node->defaultNull();
 
         return $node;
     }

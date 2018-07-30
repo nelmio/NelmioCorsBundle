@@ -37,7 +37,6 @@ class CorsListener
     );
 
     protected $dispatcher;
-    protected $options;
 
     /** @var ResolverInterface */
     protected $configurationResolver;
@@ -56,14 +55,17 @@ class CorsListener
 
         $request = $event->getRequest();
 
-        // skip if not a CORS request
-        if (!$request->headers->has('Origin') || $request->headers->get('Origin') == $request->getSchemeAndHttpHost()) {
+        if (!$options = $this->configurationResolver->getOptions($request)) {
             return;
         }
 
-        $options = $this->configurationResolver->getOptions($request);
+        // if the "forced_allow_origin_value" option is set, add a listener which will set or override the "Access-Control-Allow-Origin" header
+        if (!empty($options['forced_allow_origin_value'])) {
+            $this->dispatcher->addListener('kernel.response', array($this, 'forceAccessControlAllowOriginHeader'), -1);
+        }
 
-        if (!$options) {
+        // skip if not a CORS request
+        if (!$request->headers->has('Origin') || $request->headers->get('Origin') == $request->getSchemeAndHttpHost()) {
             return;
         }
 
@@ -78,8 +80,7 @@ class CorsListener
             return;
         }
 
-        $this->dispatcher->addListener('kernel.response', array($this, 'onKernelResponse'));
-        $this->options = $options;
+        $this->dispatcher->addListener('kernel.response', array($this, 'onKernelResponse'), 0);
     }
 
     public function onKernelResponse(FilterResponseEvent $event)
@@ -88,16 +89,28 @@ class CorsListener
             return;
         }
 
+        if (!$options = $this->configurationResolver->getOptions($request = $event->getRequest())) {
+            return;
+        }
+
         $response = $event->getResponse();
-        $request = $event->getRequest();
         // add CORS response headers
         $response->headers->set('Access-Control-Allow-Origin', $request->headers->get('Origin'));
-        if ($this->options['allow_credentials']) {
+        if ($options['allow_credentials']) {
             $response->headers->set('Access-Control-Allow-Credentials', 'true');
         }
-        if ($this->options['expose_headers']) {
-            $response->headers->set('Access-Control-Expose-Headers', strtolower(implode(', ', $this->options['expose_headers'])));
+        if ($options['expose_headers']) {
+            $response->headers->set('Access-Control-Expose-Headers', strtolower(implode(', ', $options['expose_headers'])));
         }
+    }
+
+    public function forceAccessControlAllowOriginHeader(FilterResponseEvent $event)
+    {
+        if (!$options = $this->configurationResolver->getOptions($request = $event->getRequest())) {
+            return;
+        }
+
+        $event->getResponse()->headers->set('Access-Control-Allow-Origin', $options['forced_allow_origin_value']);
     }
 
     protected function getPreflightResponse(Request $request, array $options)
@@ -114,7 +127,10 @@ class CorsListener
             $headers = $options['allow_headers'] === true
                 ? $request->headers->get('Access-Control-Request-Headers')
                 : implode(', ', $options['allow_headers']);
-            $response->headers->set('Access-Control-Allow-Headers', $headers);
+
+            if ($headers) {
+                $response->headers->set('Access-Control-Allow-Headers', $headers);
+            }
         }
         if ($options['max_age']) {
             $response->headers->set('Access-Control-Max-Age', $options['max_age']);

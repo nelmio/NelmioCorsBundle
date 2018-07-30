@@ -29,10 +29,6 @@ class NelmioCorsExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        if (!$config['paths']) {
-            return;
-        }
-
         $defaults = array_merge(
             array(
                 'allow_origin' => array(),
@@ -57,25 +53,28 @@ class NelmioCorsExtension extends Extension
             $defaults['allow_headers'] = array_map('strtolower', $defaults['allow_headers']);
         }
         $defaults['allow_methods'] = array_map('strtoupper', $defaults['allow_methods']);
-        foreach ($config['paths'] as $path => $opts) {
-            $opts = array_filter($opts);
-            if (isset($opts['allow_origin']) && in_array('*', $opts['allow_origin'])) {
-                $opts['allow_origin'] = true;
-            }
-            if (isset($opts['allow_headers']) && in_array('*', $opts['allow_headers'])) {
-                $opts['allow_headers'] = true;
-            } elseif (isset($opts['allow_headers'])) {
-                $opts['allow_headers'] = array_map('strtolower', $opts['allow_headers']);
-            }
-            if (isset($opts['allow_methods'])) {
-                $opts['allow_methods'] = array_map('strtoupper', $opts['allow_methods']);
-            }
 
-            $config['paths'][$path] = $opts;
+        if ($config['paths']) {
+            foreach ($config['paths'] as $path => $opts) {
+                $opts = array_filter($opts);
+                if (isset($opts['allow_origin']) && in_array('*', $opts['allow_origin'])) {
+                    $opts['allow_origin'] = true;
+                }
+                if (isset($opts['allow_headers']) && in_array('*', $opts['allow_headers'])) {
+                    $opts['allow_headers'] = true;
+                } elseif (isset($opts['allow_headers'])) {
+                    $opts['allow_headers'] = array_map('strtolower', $opts['allow_headers']);
+                }
+                if (isset($opts['allow_methods'])) {
+                    $opts['allow_methods'] = array_map('strtoupper', $opts['allow_methods']);
+                }
+    
+                $config['paths'][$path] = $opts;
+            }
         }
 
-        $container->setParameter('nelmio_cors.defaults', $defaults);
         $container->setParameter('nelmio_cors.map', $config['paths']);
+        $container->setParameter('nelmio_cors.defaults', $defaults);
 
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
