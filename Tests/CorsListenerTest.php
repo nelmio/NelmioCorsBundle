@@ -160,4 +160,27 @@ class CorsListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNull($event->getResponse());
     }
+
+    public function testPreflightedRequestWithoutOriginDoesNotReturnOriginHeader()
+    {
+        $options = array(
+            'allow_origin' => array(),
+            'allow_methods' => array('OPTIONS', 'POST'),
+        );
+
+        // preflight
+        $req = Request::create('/foo', 'OPTIONS');
+        $req->headers->set('Origin', 'http://example.com');
+        //$req->headers->set('Access-Control-Request-Method', 'Link');
+
+        $dispatcher = m::mock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $event = new GetResponseEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST);
+        $this->getListener($dispatcher, $options)->onKernelRequest($event);
+        $resp = $event->getResponse();
+
+        $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $resp);
+        $this->assertEquals(200, $resp->getStatusCode());
+        $this->assertNull($resp->headers->get('Access-Control-Allow-Origin'));
+        $this->assertEquals('OPTIONS, POST', $resp->headers->get('Access-Control-Allow-Methods'));
+    }
 }
