@@ -1,10 +1,11 @@
 <?php
-/**
- * File containing the CorsConfigurationProviderPassTest class.
+/*
+ * This file is part of the NelmioCorsBundle.
  *
- * @copyright Copyright (C) 2013 eZ Systems AS. All rights reserved.
- * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
- * @version //autogentag//
+ * (c) Nelmio <hello@nelm.io>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 namespace Nelmio\Tests\DependencyInjection;
 
