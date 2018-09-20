@@ -102,6 +102,36 @@ only this specific domain will be allowed to access your resources.
 > enabled in the framework, it will enable the API users to perform PUT and DELETE 
 > requests as well.
 
+## Cookbook
+
+### How to ignore preflight requests on New Relic?
+
+On specific architectures with a moslty authenticated API, preflight request can represent a huge part of the traffic.
+
+In such cases, you may not need to monitor on New Relic this traffic which is by the way categorized automatically as
+`unknown` by New Relic.
+
+A request listener can be written to ignore preflight requests:
+```php
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+
+class PreflightIgnoreOnNewRelicListener
+{
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
+        if (!extension_loaded('newrelic')) {
+            return;
+        }
+
+        if ('OPTIONS' === $event->getRequest()->getMethod()) {
+            newrelic_ignore_transaction();
+        }
+    }
+}
+```
+
+Register this listener, and voilà!
+
 ## License
 
 Released under the MIT License, see LICENSE.
