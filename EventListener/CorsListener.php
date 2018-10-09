@@ -116,6 +116,7 @@ class CorsListener
     protected function getPreflightResponse(Request $request, array $options)
     {
         $response = new Response();
+        $response->setVary(array('Origin'));
 
         if ($options['allow_credentials']) {
             $response->headers->set('Access-Control-Allow-Credentials', 'true');
