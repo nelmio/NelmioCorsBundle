@@ -73,6 +73,7 @@ class CorsListenerTest extends TestCase
         $this->assertEquals('http://example.com', $resp->headers->get('Access-Control-Allow-Origin'));
         $this->assertEquals('POST, PUT', $resp->headers->get('Access-Control-Allow-Methods'));
         $this->assertEquals('foo, bar', $resp->headers->get('Access-Control-Allow-Headers'));
+        $this->assertEquals(array('Origin'), $resp->getVary());
 
         // actual request
         $req = Request::create('/foo', 'POST');
@@ -120,6 +121,7 @@ class CorsListenerTest extends TestCase
         $this->assertEquals(200, $resp->getStatusCode());
         $this->assertEquals('http://example.com', $resp->headers->get('Access-Control-Allow-Origin'));
         $this->assertEquals('LINK, PUT, Link', $resp->headers->get('Access-Control-Allow-Methods'));
+        $this->assertEquals(array('Origin'), $resp->getVary());
     }
 
     public function testPreflightedRequestWithForcedAllowOriginValue()
@@ -148,6 +150,7 @@ class CorsListenerTest extends TestCase
         $this->assertEquals(200, $resp->getStatusCode());
         $this->assertEquals('*', $resp->headers->get('Access-Control-Allow-Origin'));
         $this->assertEquals('GET', $resp->headers->get('Access-Control-Allow-Methods'));
+        $this->assertEquals(array('Origin'), $resp->getVary());
 
         // allow_origin does not match origin header
         // => 'Access-Control-Allow-Origin' should be equal to "forced_allow_origin_value" (i.e. '*')
