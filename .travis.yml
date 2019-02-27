@@ -11,7 +11,7 @@ php:
 sudo: false
 
 before_install:
-  - composer update
+  - COMPOSER_MEMORY_LIMIT=-1 composer update
 
 script: |
   if [[ $TRAVIS_PHP_VERSION = 7.* ]]; then

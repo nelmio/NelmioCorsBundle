@@ -1,3 +1,8 @@
+### 1.5.5 (2019-02-27)
+
+  * Compatibility with Symfony 4.1
+  * Fixed preflight responses to always include `Origin` in the `Vary` HTTP header
+
 ### 1.5.4 (2017-12-11)
 
   * Compatibility with Symfony 4
