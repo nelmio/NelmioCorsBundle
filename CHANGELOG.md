@@ -1,3 +1,7 @@
+### 1.5.6 (2019-06-17)
+
+  * Fixed preflight request handler hijacking regular non-CORS OPTIONS requests.
+
 ### 1.5.5 (2019-02-27)
 
   * Compatibility with Symfony 4.1
