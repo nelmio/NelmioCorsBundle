@@ -199,6 +199,29 @@ class CorsListenerTest extends TestCase
         $this->assertNull($event->getResponse());
     }
 
+    public function testPreflightedRequestWithOriginButNo()
+    {
+        $options = array(
+            'allow_origin' => array(),
+            'allow_methods' => array('POST', 'PUT'),
+        );
+
+        $req = Request::create('/foo', 'OPTIONS');
+        $req->headers->set('Host', 'example.com');
+        $req->headers->set('Origin', 'http://evil.com');
+        $req->headers->set('Access-Control-Request-Method', 'POST');
+
+        $dispatcher = m::mock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $dispatcher->shouldReceive('addListener')->times(0);
+
+        $event = new GetResponseEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST);
+        $this->getListener($dispatcher, $options)->onKernelRequest($event);
+        $resp = $event->getResponse();
+        $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $resp);
+        $this->assertEquals(200, $resp->getStatusCode());
+        $this->assertNull($resp->headers->get('Access-Control-Allow-Origin'));
+    }
+
     public function testRequestWithOriginButNo()
     {
         // Request with same host as origin
