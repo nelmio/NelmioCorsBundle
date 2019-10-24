@@ -38,7 +38,7 @@ class ResolverTest extends TestCase
      */
     protected $extraProviderValue;
 
-    public function tearDown()
+    public function tearDown(): void
     {
         m::close();
     }

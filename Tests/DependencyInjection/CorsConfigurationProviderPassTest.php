@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class CorsConfigurationProviderPassTest extends AbstractCompilerPassTestCase
 {
-    protected function registerCompilerPass(ContainerBuilder $container)
+    protected function registerCompilerPass(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new CorsConfigurationProviderPass());
     }

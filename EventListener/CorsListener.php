@@ -11,13 +11,13 @@
 
 namespace Nelmio\CorsBundle\EventListener;
 
-use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Nelmio\CorsBundle\Options\ResolverInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Nelmio\CorsBundle\Options\ResolverInterface;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
  * Adds CORS headers and handles pre-flight requests
@@ -47,7 +47,7 @@ class CorsListener
         $this->configurationResolver = $configurationResolver;
     }
 
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(RequestEvent $event)
     {
         if (HttpKernelInterface::MASTER_REQUEST !== $event->getRequestType()) {
             return;
@@ -83,7 +83,7 @@ class CorsListener
         $this->dispatcher->addListener('kernel.response', array($this, 'onKernelResponse'), 0);
     }
 
-    public function onKernelResponse(FilterResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event)
     {
         if (HttpKernelInterface::MASTER_REQUEST !== $event->getRequestType()) {
             return;
@@ -104,7 +104,7 @@ class CorsListener
         }
     }
 
-    public function forceAccessControlAllowOriginHeader(FilterResponseEvent $event)
+    public function forceAccessControlAllowOriginHeader(ResponseEvent $event)
     {
         if (!$options = $this->configurationResolver->getOptions($request = $event->getRequest())) {
             return;
