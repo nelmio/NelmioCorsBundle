@@ -18,7 +18,6 @@
         "symfony/framework-bundle": "^4.3 || ^5.0"
     },
     "require-dev": {
-        "matthiasnoback/symfony-dependency-injection-test": "^4.0",
         "mockery/mockery": "^1.2",
         "symfony/phpunit-bridge": "^4.3 || ^5.0"
     },
