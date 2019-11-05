@@ -11,4 +11,4 @@ before_install:
   - COMPOSER_MEMORY_LIMIT=-1 composer update
 
 script: |
-  SYMFONY_DEPRECATIONS_HELPER=max[direct]=0 SYMFONY_PHPUNIT_VERSION=7.5 ./vendor/bin/simple-phpunit
+  ./vendor/bin/simple-phpunit
