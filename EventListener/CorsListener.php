@@ -118,7 +118,7 @@ class CorsListener
         }
     }
 
-    protected function getPreflightResponse(Request $request, array $options)
+    protected function getPreflightResponse(Request $request, array $options): Response
     {
         $response = new Response();
         $response->setVary(array('Origin'));
@@ -186,7 +186,7 @@ class CorsListener
         return $response;
     }
 
-    protected function checkOrigin(Request $request, array $options)
+    protected function checkOrigin(Request $request, array $options): bool
     {
         // check origin
         $origin = $request->headers->get('Origin');

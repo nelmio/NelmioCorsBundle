@@ -46,7 +46,7 @@ class CorsConfigurationProviderPass implements CompilerPassInterface
      * @param  array       $providersByPriority
      * @return Reference[]
      */
-    protected function sortProviders(array $providersByPriority)
+    protected function sortProviders(array $providersByPriority): array
     {
         ksort($providersByPriority);
 

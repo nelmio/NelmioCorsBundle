@@ -39,7 +39,7 @@ class Resolver implements ResolverInterface
      *
      * @return array CORS options
      */
-    public function getOptions(Request $request)
+    public function getOptions(Request $request): array
     {
         $options = array();
         foreach ($this->providers as $provider) {

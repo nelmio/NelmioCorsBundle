@@ -129,7 +129,7 @@ class ConfigProviderTest extends TestCase
     /**
      * @return ConfigProvider
      */
-    protected function getProvider()
+    protected function getProvider(): ConfigProvider
     {
         return new ConfigProvider(
             array(

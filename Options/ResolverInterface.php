@@ -20,7 +20,7 @@ interface ResolverInterface
      *
      * @internal param string $path
      *
-     * @return mixed
+     * @return array
      */
-    public function getOptions(Request $request);
+    public function getOptions(Request $request): array;
 }

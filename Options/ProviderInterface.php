@@ -37,5 +37,5 @@ interface ProviderInterface
      *
      * @return array CORS options
      */
-    public function getOptions(Request $request);
+    public function getOptions(Request $request): array;
 }

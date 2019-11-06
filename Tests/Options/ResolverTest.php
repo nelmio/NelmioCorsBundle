@@ -73,7 +73,7 @@ class ResolverTest extends TestCase
     /**
      * @return Resolver
      */
-    protected function getResolver()
+    protected function getResolver(): Resolver
     {
         return new Resolver(
             array(
@@ -86,7 +86,7 @@ class ResolverTest extends TestCase
     /**
      * @return m\MockInterface|ProviderInterface
      */
-    protected function getDefaultProviderMock()
+    protected function getDefaultProviderMock(): ProviderInterface
     {
         $mock = $this->getProviderMock();
         $mock
@@ -100,7 +100,7 @@ class ResolverTest extends TestCase
     /**
      * @return m\MockInterface|ProviderInterface
      */
-    protected function getExtraProviderMock()
+    protected function getExtraProviderMock(): ProviderInterface
     {
         $mock = $this->getProviderMock();
         $mock
@@ -114,7 +114,7 @@ class ResolverTest extends TestCase
     /**
      * @return m\MockInterface|ProviderInterface
      */
-    protected function getProviderMock()
+    protected function getProviderMock(): ProviderInterface
     {
         return m::mock('Nelmio\CorsBundle\Options\ProviderInterface');
     }

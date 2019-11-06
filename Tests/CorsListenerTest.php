@@ -27,7 +27,7 @@ class CorsListenerTest extends TestCase
         m::close();
     }
 
-    public function getListener(array $options = array())
+    public function getListener(array $options = array()): CorsListener
     {
         $mergedOptions = array_merge(
             array(

@@ -28,7 +28,7 @@ class ConfigProvider implements ProviderInterface
         $this->paths = $paths;
     }
 
-    public function getOptions(Request $request)
+    public function getOptions(Request $request): array
     {
         $uri = $request->getPathInfo() ?: '/';
         foreach ($this->paths as $pathRegexp => $options) {
