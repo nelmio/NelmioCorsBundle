@@ -43,7 +43,7 @@ class ResolverTest extends TestCase
         m::close();
     }
 
-    public function testGetOptionsForPath()
+    public function testGetOptionsForPath(): void
     {
         $this->defaultProviderValue = array(
             'simple_value' => 'a',

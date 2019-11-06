@@ -66,7 +66,7 @@ class ConfigProviderTest extends TestCase
         'hosts' => array(),
     );
 
-    public function testGetOptionsForPathDefault()
+    public function testGetOptionsForPathDefault(): void
     {
         $provider = $this->getProvider();
 
@@ -76,7 +76,7 @@ class ConfigProviderTest extends TestCase
         );
     }
 
-    public function testGetOptionsForMappedPath()
+    public function testGetOptionsForMappedPath(): void
     {
         $provider = $this->getProvider();
 
@@ -86,7 +86,7 @@ class ConfigProviderTest extends TestCase
         );
     }
 
-    public function testGetOptionsMatchingDomain()
+    public function testGetOptionsMatchingDomain(): void
     {
         $provider = $this->getProvider();
 
@@ -96,7 +96,7 @@ class ConfigProviderTest extends TestCase
         );
     }
 
-    public function testGetOptionsMatchingDomain2()
+    public function testGetOptionsMatchingDomain2(): void
     {
         $provider = $this->getProvider();
 
@@ -106,7 +106,7 @@ class ConfigProviderTest extends TestCase
         );
     }
 
-    public function testGetOptionsNotMatchingDomain()
+    public function testGetOptionsNotMatchingDomain(): void
     {
         $provider = $this->getProvider();
 
@@ -116,7 +116,7 @@ class ConfigProviderTest extends TestCase
         );
     }
 
-    public function testGetOptionsRegexOrigin()
+    public function testGetOptionsRegexOrigin(): void
     {
         $provider = $this->getProvider();
 

@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\Definition;
 
 class CorsConfigurationProviderPassTest extends TestCase
 {
-    public function testCollectProviders()
+    public function testCollectProviders(): void
     {
         $container = $this->getContainerBuilder();
         $container->compile();

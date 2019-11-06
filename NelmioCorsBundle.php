@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class NelmioCorsBundle extends Bundle
 {
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         parent::build($container);
         $container->addCompilerPass(new DependencyInjection\Compiler\CorsConfigurationProviderPass());

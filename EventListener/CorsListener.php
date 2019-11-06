@@ -46,7 +46,7 @@ class CorsListener
         $this->configurationResolver = $configurationResolver;
     }
 
-    public function onKernelRequest(RequestEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         if (HttpKernelInterface::MASTER_REQUEST !== $event->getRequestType()) {
             return;
@@ -82,7 +82,7 @@ class CorsListener
         $request->attributes->set(self::SHOULD_ALLOW_ORIGIN_ATTR, true);
     }
 
-    public function onKernelResponse(ResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event): void
     {
         if (HttpKernelInterface::MASTER_REQUEST !== $event->getRequestType()) {
             return;
@@ -191,11 +191,13 @@ class CorsListener
         // check origin
         $origin = $request->headers->get('Origin');
 
-        if ($options['allow_origin'] === true) return true;
+        if ($options['allow_origin'] === true) {
+            return true;
+        }
 
         if ($options['origin_regex'] === true) {
             // origin regex matching
-            foreach($options['allow_origin'] as $originRegexp) {
+            foreach ($options['allow_origin'] as $originRegexp) {
                 if (preg_match('{'.$originRegexp.'}i', $origin)) {
                     return true;
                 }

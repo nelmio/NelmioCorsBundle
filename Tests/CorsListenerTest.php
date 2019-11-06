@@ -50,7 +50,7 @@ class CorsListenerTest extends TestCase
         return new CorsListener($resolver);
     }
 
-    public function testPreflightedRequest()
+    public function testPreflightedRequest(): void
     {
         $options = array(
             'allow_origin' => array(true),
@@ -93,7 +93,7 @@ class CorsListenerTest extends TestCase
         $this->assertEquals(null, $resp->headers->get('Access-Control-Allow-Headers'));
     }
 
-    public function testPreflightedRequestLinkFirefox()
+    public function testPreflightedRequestLinkFirefox(): void
     {
         $options = array(
             'allow_origin' => array(true),
@@ -115,7 +115,7 @@ class CorsListenerTest extends TestCase
         $this->assertEquals(array('Origin'), $resp->getVary());
     }
 
-    public function testPreflightedRequestWithForcedAllowOriginValue()
+    public function testPreflightedRequestWithForcedAllowOriginValue(): void
     {
         // allow_origin matches origin header
         // => 'Access-Control-Allow-Origin' should be equal to "forced_allow_origin_value" (i.e. '*')
@@ -163,7 +163,7 @@ class CorsListenerTest extends TestCase
         $this->assertEquals('GET', $resp->headers->get('Access-Control-Allow-Methods'));
     }
 
-    public function testSameHostRequest()
+    public function testSameHostRequest(): void
     {
         // Request with same host as origin
         $options = array(
@@ -205,7 +205,7 @@ class CorsListenerTest extends TestCase
         $this->assertNull($resp->headers->get('Access-Control-Allow-Origin'));
     }
 
-    public function testRequestWithOriginButNo()
+    public function testRequestWithOriginButNo(): void
     {
         // Request with same host as origin
         $options = array(
@@ -222,7 +222,7 @@ class CorsListenerTest extends TestCase
         $this->assertNull($event->getResponse());
     }
 
-    public function testRequestWithForcedAllowOriginValue()
+    public function testRequestWithForcedAllowOriginValue(): void
     {
         // allow_origin matches origin header
         // => 'Access-Control-Allow-Origin' should be equal to "forced_allow_origin_value" (i.e. 'http://example.com http://huh-lala.foobar')
