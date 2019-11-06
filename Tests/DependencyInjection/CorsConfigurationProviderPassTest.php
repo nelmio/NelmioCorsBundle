@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Nelmio\Tests\DependencyInjection;
 
 use Fixtures\ProviderMock;
@@ -19,7 +20,7 @@ use Symfony\Component\DependencyInjection\Definition;
 
 class CorsConfigurationProviderPassTest extends TestCase
 {
-    public function testCollectProviders()
+    public function testCollectProviders(): void
     {
         $container = $this->getContainerBuilder();
         $container->compile();

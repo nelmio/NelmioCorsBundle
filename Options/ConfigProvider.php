@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Nelmio\CorsBundle\Options;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -22,13 +23,13 @@ class ConfigProvider implements ProviderInterface
     protected $paths;
     protected $defaults;
 
-    public function __construct(array $paths, array $defaults = array())
+    public function __construct(array $paths, array $defaults = [])
     {
         $this->defaults = $defaults;
         $this->paths = $paths;
     }
 
-    public function getOptions(Request $request)
+    public function getOptions(Request $request): array
     {
         $uri = $request->getPathInfo() ?: '/';
         foreach ($this->paths as $pathRegexp => $options) {

@@ -11,15 +11,15 @@
 
 namespace Nelmio\CorsBundle;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * @author Jordi Boggiano <j.boggiano@seld.be>
  */
 class NelmioCorsBundle extends Bundle
 {
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         parent::build($container);
         $container->addCompilerPass(new DependencyInjection\Compiler\CorsConfigurationProviderPass());

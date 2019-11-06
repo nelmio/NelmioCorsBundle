@@ -11,11 +11,11 @@
 
 namespace Nelmio\CorsBundle\DependencyInjection;
 
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\BooleanNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\ScalarNodeDefinition;
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
  * @author Jordi Boggiano <j.boggiano@seld.be>
@@ -25,7 +25,7 @@ class Configuration implements ConfigurationInterface
     /**
      * {@inheritDoc}
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('nelmio_cors');
 
@@ -71,7 +71,7 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    private function getAllowCredentials()
+    private function getAllowCredentials(): BooleanNodeDefinition
     {
         $node = new BooleanNodeDefinition('allow_credentials');
         $node->defaultFalse();
@@ -79,7 +79,7 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function getAllowOrigin()
+    private function getAllowOrigin(): ArrayNodeDefinition
     {
         $node = new ArrayNodeDefinition('allow_origin');
 
@@ -87,7 +87,7 @@ class Configuration implements ConfigurationInterface
             ->beforeNormalization()
                 ->always(function ($v) {
                     if ($v === '*') {
-                        return array('*');
+                        return ['*'];
                     }
 
                     return $v;
@@ -99,7 +99,7 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function getAllowHeaders()
+    private function getAllowHeaders(): ArrayNodeDefinition
     {
         $node = new ArrayNodeDefinition('allow_headers');
 
@@ -107,7 +107,7 @@ class Configuration implements ConfigurationInterface
             ->beforeNormalization()
                 ->always(function ($v) {
                     if ($v === '*') {
-                        return array('*');
+                        return ['*'];
                     }
 
                     return $v;
@@ -118,7 +118,7 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function getAllowMethods()
+    private function getAllowMethods(): ArrayNodeDefinition
     {
         $node = new ArrayNodeDefinition('allow_methods');
 
@@ -127,7 +127,7 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function getExposeHeaders()
+    private function getExposeHeaders(): ArrayNodeDefinition
     {
         $node = new ArrayNodeDefinition('expose_headers');
 
@@ -136,7 +136,7 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function getMaxAge()
+    private function getMaxAge(): ScalarNodeDefinition
     {
         $node = new ScalarNodeDefinition('max_age');
 
@@ -153,7 +153,7 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function getHosts()
+    private function getHosts(): ArrayNodeDefinition
     {
         $node = new ArrayNodeDefinition('hosts');
 
@@ -162,7 +162,7 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function getOriginRegex()
+    private function getOriginRegex(): BooleanNodeDefinition
     {
         $node = new BooleanNodeDefinition('origin_regex');
         $node->defaultFalse();
@@ -170,7 +170,7 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function getForcedAllowOriginValue()
+    private function getForcedAllowOriginValue(): ScalarNodeDefinition
     {
         $node = new ScalarNodeDefinition('forced_allow_origin_value');
         $node->defaultNull();

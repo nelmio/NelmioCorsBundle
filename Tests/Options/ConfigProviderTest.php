@@ -15,58 +15,58 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ConfigProviderTest extends TestCase
 {
-    protected $defaultOptions = array(
+    protected $defaultOptions = [
         'allow_credentials' => false,
-        'allow_origin' => array('http://one.example.com'),
+        'allow_origin' => ['http://one.example.com'],
         'allow_headers' => false,
-        'allow_methods' => array('GET'),
-        'expose_headers' => array(),
+        'allow_methods' => ['GET'],
+        'expose_headers' => [],
         'max_age' => 0,
-        'hosts' => array(),
-    );
+        'hosts' => [],
+    ];
 
-    protected $pathOptions = array(
+    protected $pathOptions = [
         'allow_credentials' => true,
-        'allow_origin' => array('http://two.example.com'),
+        'allow_origin' => ['http://two.example.com'],
         'allow_headers' => true,
-        'allow_methods' => array('PUT', 'POST'),
-        'expose_headers' => array('X-CorsTest'),
+        'allow_methods' => ['PUT', 'POST'],
+        'expose_headers' => ['X-CorsTest'],
         'max_age' => 120,
-        'hosts' => array(),
-    );
+        'hosts' => [],
+    ];
 
-    protected $domainMatchOptions = array(
+    protected $domainMatchOptions = [
         'allow_credentials' => true,
-        'allow_origin' => array('http://domainmatch.example.com'),
+        'allow_origin' => ['http://domainmatch.example.com'],
         'allow_headers' => true,
-        'allow_methods' => array('PUT', 'POST'),
-        'expose_headers' => array(),
+        'allow_methods' => ['PUT', 'POST'],
+        'expose_headers' => [],
         'max_age' => 160,
-        'hosts' => array('^test\.', '\.example\.org$'),
-    );
+        'hosts' => ['^test\.', '\.example\.org$'],
+    ];
 
-    protected $noDomainMatchOptions = array(
+    protected $noDomainMatchOptions = [
         'allow_credentials' => true,
-        'allow_origin' => array('http://nomatch.example.com'),
+        'allow_origin' => ['http://nomatch.example.com'],
         'allow_headers' => true,
-        'allow_methods' => array('PUT', 'POST'),
-        'expose_headers' => array('X-CorsTest'),
+        'allow_methods' => ['PUT', 'POST'],
+        'expose_headers' => ['X-CorsTest'],
         'max_age' => 180,
-        'hosts' => array('^nomatch\.'),
-    );
+        'hosts' => ['^nomatch\.'],
+    ];
 
-    protected $originRegexOptions = array(
+    protected $originRegexOptions = [
         'allow_credentials' => true,
-        'allow_origin' => array('^http://(.*)\.example\.com'),
+        'allow_origin' => ['^http://(.*)\.example\.com'],
         'origin_regex' => true,
         'allow_headers' => true,
-        'allow_methods' => array('PUT', 'POST'),
-        'expose_headers' => array(),
+        'allow_methods' => ['PUT', 'POST'],
+        'expose_headers' => [],
         'max_age' => 0,
-        'hosts' => array(),
-    );
+        'hosts' => [],
+    ];
 
-    public function testGetOptionsForPathDefault()
+    public function testGetOptionsForPathDefault(): void
     {
         $provider = $this->getProvider();
 
@@ -76,7 +76,7 @@ class ConfigProviderTest extends TestCase
         );
     }
 
-    public function testGetOptionsForMappedPath()
+    public function testGetOptionsForMappedPath(): void
     {
         $provider = $this->getProvider();
 
@@ -86,37 +86,37 @@ class ConfigProviderTest extends TestCase
         );
     }
 
-    public function testGetOptionsMatchingDomain()
+    public function testGetOptionsMatchingDomain(): void
     {
         $provider = $this->getProvider();
 
         self::assertEquals(
             $this->domainMatchOptions,
-            $provider->getOptions(Request::create('/test/match', 'OPTIONS', array(), array(), array(), array('HTTP_HOST' => 'test.example.com')))
+            $provider->getOptions(Request::create('/test/match', 'OPTIONS', [], [], [], ['HTTP_HOST' => 'test.example.com']))
         );
     }
 
-    public function testGetOptionsMatchingDomain2()
+    public function testGetOptionsMatchingDomain2(): void
     {
         $provider = $this->getProvider();
 
         self::assertEquals(
             $this->domainMatchOptions,
-            $provider->getOptions(Request::create('/test/match', 'OPTIONS', array(), array(), array(), array('HTTP_HOST' => 'foo.example.org')))
+            $provider->getOptions(Request::create('/test/match', 'OPTIONS', [], [], [], ['HTTP_HOST' => 'foo.example.org']))
         );
     }
 
-    public function testGetOptionsNotMatchingDomain()
+    public function testGetOptionsNotMatchingDomain(): void
     {
         $provider = $this->getProvider();
 
         self::assertEquals(
             $this->pathOptions,
-            $provider->getOptions(Request::create('/test/nomatch', 'OPTIONS', array(), array(), array(), array('HTTP_HOST' => 'example.com')))
+            $provider->getOptions(Request::create('/test/nomatch', 'OPTIONS', [], [], [], ['HTTP_HOST' => 'example.com']))
         );
     }
 
-    public function testGetOptionsRegexOrigin()
+    public function testGetOptionsRegexOrigin(): void
     {
         $provider = $this->getProvider();
 
@@ -126,26 +126,23 @@ class ConfigProviderTest extends TestCase
         );
     }
 
-    /**
-     * @return ConfigProvider
-     */
-    protected function getProvider()
+    protected function getProvider(): ConfigProvider
     {
         return new ConfigProvider(
-            array(
+            [
                 '^/test/regex' => $this->originRegexOptions,
                 '^/test/match' => $this->domainMatchOptions,
                 '^/test/nomatch' => $this->noDomainMatchOptions,
                 '^/test/' => $this->pathOptions,
-                '^/othertest/' => array(
+                '^/othertest/' => [
                     'allow_credentials' => true,
-                    'allow_origin' => array('http://nope.example.com'),
+                    'allow_origin' => ['http://nope.example.com'],
                     'allow_headers' => true,
-                    'allow_methods' => array('COPY'),
-                    'expose_headers' => array('X-Cors-Nope'),
-                    'max_age' => 42
-                )
-            ),
+                    'allow_methods' => ['COPY'],
+                    'expose_headers' => ['X-Cors-Nope'],
+                    'max_age' => 42,
+                ],
+            ],
             $this->defaultOptions
         );
     }

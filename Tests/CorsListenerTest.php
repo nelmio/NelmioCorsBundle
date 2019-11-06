@@ -27,20 +27,20 @@ class CorsListenerTest extends TestCase
         m::close();
     }
 
-    public function getListener(array $options = array())
+    public function getListener(array $options = []): CorsListener
     {
         $mergedOptions = array_merge(
-            array(
-                'allow_origin' => array(),
+            [
+                'allow_origin' => [],
                 'allow_credentials' => false,
-                'allow_headers' => array(),
-                'expose_headers' => array(),
-                'allow_methods' => array(),
+                'allow_headers' => [],
+                'expose_headers' => [],
+                'allow_methods' => [],
                 'max_age' => 0,
-                'hosts' => array(),
+                'hosts' => [],
                 'origin_regex' => false,
                 'forced_allow_origin_value' => null,
-            ),
+            ],
             $options
         );
 
@@ -50,13 +50,13 @@ class CorsListenerTest extends TestCase
         return new CorsListener($resolver);
     }
 
-    public function testPreflightedRequest()
+    public function testPreflightedRequest(): void
     {
-        $options = array(
-            'allow_origin' => array(true),
-            'allow_headers' => array('foo', 'bar'),
-            'allow_methods' => array('POST', 'PUT'),
-        );
+        $options = [
+            'allow_origin' => [true],
+            'allow_headers' => ['foo', 'bar'],
+            'allow_methods' => ['POST', 'PUT'],
+        ];
 
         // preflight
         $req = Request::create('/foo', 'OPTIONS');
@@ -73,7 +73,7 @@ class CorsListenerTest extends TestCase
         $this->assertEquals('http://example.com', $resp->headers->get('Access-Control-Allow-Origin'));
         $this->assertEquals('POST, PUT', $resp->headers->get('Access-Control-Allow-Methods'));
         $this->assertEquals('foo, bar', $resp->headers->get('Access-Control-Allow-Headers'));
-        $this->assertEquals(array('Origin'), $resp->getVary());
+        $this->assertEquals(['Origin'], $resp->getVary());
 
         // actual request
         $req = Request::create('/foo', 'POST');
@@ -93,12 +93,12 @@ class CorsListenerTest extends TestCase
         $this->assertEquals(null, $resp->headers->get('Access-Control-Allow-Headers'));
     }
 
-    public function testPreflightedRequestLinkFirefox()
+    public function testPreflightedRequestLinkFirefox(): void
     {
-        $options = array(
-            'allow_origin' => array(true),
-            'allow_methods' => array('LINK', 'PUT'),
-        );
+        $options = [
+            'allow_origin' => [true],
+            'allow_methods' => ['LINK', 'PUT'],
+        ];
 
         // preflight
         $req = Request::create('/foo', 'OPTIONS');
@@ -112,18 +112,18 @@ class CorsListenerTest extends TestCase
         $this->assertEquals(200, $resp->getStatusCode());
         $this->assertEquals('http://example.com', $resp->headers->get('Access-Control-Allow-Origin'));
         $this->assertEquals('LINK, PUT, Link', $resp->headers->get('Access-Control-Allow-Methods'));
-        $this->assertEquals(array('Origin'), $resp->getVary());
+        $this->assertEquals(['Origin'], $resp->getVary());
     }
 
-    public function testPreflightedRequestWithForcedAllowOriginValue()
+    public function testPreflightedRequestWithForcedAllowOriginValue(): void
     {
         // allow_origin matches origin header
         // => 'Access-Control-Allow-Origin' should be equal to "forced_allow_origin_value" (i.e. '*')
-        $options = array(
-            'allow_origin' => array(true),
-            'allow_methods' => array('GET'),
+        $options = [
+            'allow_origin' => [true],
+            'allow_methods' => ['GET'],
             'forced_allow_origin_value' => '*',
-        );
+        ];
 
         $req = Request::create('/foo', 'OPTIONS');
         $req->headers->set('Origin', 'http://example.com');
@@ -138,15 +138,15 @@ class CorsListenerTest extends TestCase
         $this->assertEquals(200, $resp->getStatusCode());
         $this->assertEquals('*', $resp->headers->get('Access-Control-Allow-Origin'));
         $this->assertEquals('GET', $resp->headers->get('Access-Control-Allow-Methods'));
-        $this->assertEquals(array('Origin'), $resp->getVary());
+        $this->assertEquals(['Origin'], $resp->getVary());
 
         // allow_origin does not match origin header
         // => 'Access-Control-Allow-Origin' should be equal to "forced_allow_origin_value" (i.e. '*')
-        $options = array(
-            'allow_origin' => array(),
-            'allow_methods' => array('GET'),
+        $options = [
+            'allow_origin' => [],
+            'allow_methods' => ['GET'],
             'forced_allow_origin_value' => '*',
-        );
+        ];
 
         $req = Request::create('/foo', 'OPTIONS');
         $req->headers->set('Origin', 'http://example.com');
@@ -163,14 +163,14 @@ class CorsListenerTest extends TestCase
         $this->assertEquals('GET', $resp->headers->get('Access-Control-Allow-Methods'));
     }
 
-    public function testSameHostRequest()
+    public function testSameHostRequest(): void
     {
         // Request with same host as origin
-        $options = array(
-            'allow_origin' => array(),
-            'allow_headers' => array('foo', 'bar'),
-            'allow_methods' => array('POST', 'PUT'),
-        );
+        $options = [
+            'allow_origin' => [],
+            'allow_headers' => ['foo', 'bar'],
+            'allow_methods' => ['POST', 'PUT'],
+        ];
 
         $req = Request::create('/foo', 'POST');
         $req->headers->set('Host', 'example.com');
@@ -184,10 +184,10 @@ class CorsListenerTest extends TestCase
 
     public function testPreflightedRequestWithOriginButNo()
     {
-        $options = array(
-            'allow_origin' => array(),
-            'allow_methods' => array('POST', 'PUT'),
-        );
+        $options = [
+            'allow_origin' => [],
+            'allow_methods' => ['POST', 'PUT'],
+        ];
 
         $req = Request::create('/foo', 'OPTIONS');
         $req->headers->set('Host', 'example.com');
@@ -205,12 +205,12 @@ class CorsListenerTest extends TestCase
         $this->assertNull($resp->headers->get('Access-Control-Allow-Origin'));
     }
 
-    public function testRequestWithOriginButNo()
+    public function testRequestWithOriginButNo(): void
     {
         // Request with same host as origin
-        $options = array(
-            'allow_origin' => array(),
-        );
+        $options = [
+            'allow_origin' => [],
+        ];
 
         $req = Request::create('/foo', 'GET');
         $req->headers->set('Host', 'example.com');
@@ -222,15 +222,15 @@ class CorsListenerTest extends TestCase
         $this->assertNull($event->getResponse());
     }
 
-    public function testRequestWithForcedAllowOriginValue()
+    public function testRequestWithForcedAllowOriginValue(): void
     {
         // allow_origin matches origin header
         // => 'Access-Control-Allow-Origin' should be equal to "forced_allow_origin_value" (i.e. 'http://example.com http://huh-lala.foobar')
-        $options = array(
-            'allow_origin' => array('http://example.com'),
-            'allow_methods' => array('GET'),
+        $options = [
+            'allow_origin' => ['http://example.com'],
+            'allow_methods' => ['GET'],
             'forced_allow_origin_value' => 'http://example.com http://huh-lala.foobar',
-        );
+        ];
 
         $req = Request::create('/foo', 'GET');
         $req->headers->set('Origin', 'http://example.com');
@@ -246,9 +246,9 @@ class CorsListenerTest extends TestCase
 
         // request without "Origin" header
         // => 'Access-Control-Allow-Origin' should be equal to "forced_allow_origin_value" (i.e. '*')
-        $options = array(
+        $options = [
             'forced_allow_origin_value' => '*',
-        );
+        ];
 
         $req = Request::create('/foo', 'GET');
 

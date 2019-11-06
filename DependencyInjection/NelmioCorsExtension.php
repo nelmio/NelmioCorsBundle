@@ -11,10 +11,10 @@
 
 namespace Nelmio\CorsBundle\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
  * @author Jordi Boggiano <j.boggiano@seld.be>
@@ -24,22 +24,22 @@ class NelmioCorsExtension extends Extension
     /**
      * {@inheritDoc}
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
         $defaults = array_merge(
-            array(
-                'allow_origin' => array(),
+            [
+                'allow_origin' => [],
                 'allow_credentials' => false,
-                'allow_headers' => array(),
-                'expose_headers' => array(),
-                'allow_methods' => array(),
+                'allow_headers' => [],
+                'expose_headers' => [],
+                'allow_methods' => [],
                 'max_age' => 0,
-                'hosts' => array(),
+                'hosts' => [],
                 'origin_regex' => false,
-            ),
+            ],
             $config['defaults']
         );
 
@@ -68,7 +68,7 @@ class NelmioCorsExtension extends Extension
                 if (isset($opts['allow_methods'])) {
                     $opts['allow_methods'] = array_map('strtoupper', $opts['allow_methods']);
                 }
-    
+
                 $config['paths'][$path] = $opts;
             }
         }

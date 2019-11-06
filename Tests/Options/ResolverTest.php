@@ -9,9 +9,9 @@
  */
 namespace Nelmio\CorsBundle\Tests\Options;
 
+use Mockery as m;
 use Nelmio\CorsBundle\Options\ProviderInterface;
 use Nelmio\CorsBundle\Options\Resolver;
-use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -43,50 +43,47 @@ class ResolverTest extends TestCase
         m::close();
     }
 
-    public function testGetOptionsForPath()
+    public function testGetOptionsForPath(): void
     {
-        $this->defaultProviderValue = array(
+        $this->defaultProviderValue = [
             'simple_value' => 'a',
             'other_simple_value' => 'b',
-            'array_value' => array( 'a', 'b' ),
-            'other_array_value' => array( 'c', 'd' ),
-        );
+            'array_value' => ['a', 'b'],
+            'other_array_value' => ['c', 'd'],
+        ];
 
-        $this->extraProviderValue = array(
+        $this->extraProviderValue = [
             'simple_value' => 'c',
-            'array_value' => array( 'e' ),
-            'new_value' => 'x'
-        );
+            'array_value' => ['e'],
+            'new_value' => 'x',
+        ];
 
         self::assertEquals(
-            array(
+            [
                 'simple_value' => 'c',
                 'other_simple_value' => 'b',
-                'array_value' => array( 'e' ),
-                'other_array_value' => array( 'c', 'd' ),
-                'new_value' => 'x'
-            ),
-            $this->getResolver()->getOptions(new Request)
+                'array_value' => ['e'],
+                'other_array_value' => ['c', 'd'],
+                'new_value' => 'x',
+            ],
+            $this->getResolver()->getOptions(new Request())
         );
     }
 
-    /**
-     * @return Resolver
-     */
-    protected function getResolver()
+    protected function getResolver(): Resolver
     {
         return new Resolver(
-            array(
+            [
                 $this->getDefaultProviderMock(),
-                $this->getExtraProviderMock()
-            )
+                $this->getExtraProviderMock(),
+            ]
         );
     }
 
     /**
      * @return m\MockInterface|ProviderInterface
      */
-    protected function getDefaultProviderMock()
+    protected function getDefaultProviderMock(): ProviderInterface
     {
         $mock = $this->getProviderMock();
         $mock
@@ -100,7 +97,7 @@ class ResolverTest extends TestCase
     /**
      * @return m\MockInterface|ProviderInterface
      */
-    protected function getExtraProviderMock()
+    protected function getExtraProviderMock(): ProviderInterface
     {
         $mock = $this->getProviderMock();
         $mock
@@ -114,7 +111,7 @@ class ResolverTest extends TestCase
     /**
      * @return m\MockInterface|ProviderInterface
      */
-    protected function getProviderMock()
+    protected function getProviderMock(): ProviderInterface
     {
         return m::mock('Nelmio\CorsBundle\Options\ProviderInterface');
     }
