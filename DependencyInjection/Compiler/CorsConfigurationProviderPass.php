@@ -26,7 +26,7 @@ class CorsConfigurationProviderPass implements CompilerPassInterface
 
         $resolverDefinition = $container->getDefinition('nelmio_cors.options_resolver');
 
-        $optionsProvidersByPriority = array();
+        $optionsProvidersByPriority = [];
         foreach ($container->findTaggedServiceIds('nelmio_cors.options_provider') as $taggedServiceId => $tagAttributes) {
             foreach ($tagAttributes as $attribute) {
                 $priority = isset($attribute['priority']) ? $attribute['priority'] : 0;
@@ -36,7 +36,7 @@ class CorsConfigurationProviderPass implements CompilerPassInterface
 
         if (count($optionsProvidersByPriority) > 0) {
             $resolverDefinition->setArguments(
-                array($this->sortProviders($optionsProvidersByPriority))
+                [$this->sortProviders($optionsProvidersByPriority)]
             );
         }
     }

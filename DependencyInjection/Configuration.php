@@ -11,11 +11,11 @@
 
 namespace Nelmio\CorsBundle\DependencyInjection;
 
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\BooleanNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\ScalarNodeDefinition;
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
  * @author Jordi Boggiano <j.boggiano@seld.be>
@@ -87,7 +87,7 @@ class Configuration implements ConfigurationInterface
             ->beforeNormalization()
                 ->always(function ($v) {
                     if ($v === '*') {
-                        return array('*');
+                        return ['*'];
                     }
 
                     return $v;
@@ -107,7 +107,7 @@ class Configuration implements ConfigurationInterface
             ->beforeNormalization()
                 ->always(function ($v) {
                     if ($v === '*') {
-                        return array('*');
+                        return ['*'];
                     }
 
                     return $v;

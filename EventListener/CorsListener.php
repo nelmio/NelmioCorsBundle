@@ -31,12 +31,12 @@ class CorsListener
     /**
      * Simple headers as defined in the spec should always be accepted
      */
-    protected static $simpleHeaders = array(
+    protected static $simpleHeaders = [
         'accept',
         'accept-language',
         'content-language',
         'origin',
-    );
+    ];
 
     /** @var ResolverInterface */
     protected $configurationResolver;
@@ -121,7 +121,7 @@ class CorsListener
     protected function getPreflightResponse(Request $request, array $options): Response
     {
         $response = new Response();
-        $response->setVary(array('Origin'));
+        $response->setVary(['Origin']);
 
         if ($options['allow_credentials']) {
             $response->headers->set('Access-Control-Allow-Credentials', 'true');

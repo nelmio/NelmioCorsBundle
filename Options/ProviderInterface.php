@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Nelmio\CorsBundle\Options;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -32,8 +33,6 @@ interface ProviderInterface
      * - array allow_methods
      * - array expose_headers
      * - int max_age
-     *
-     * @param Request $request
      *
      * @return array CORS options
      */

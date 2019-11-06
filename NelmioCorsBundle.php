@@ -11,8 +11,8 @@
 
 namespace Nelmio\CorsBundle;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * @author Jordi Boggiano <j.boggiano@seld.be>

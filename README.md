@@ -33,11 +33,11 @@ Add the NelmioCorsBundle to your application's kernel:
 ```php
     public function registerBundles()
     {
-        $bundles = array(
+        $bundles = [
             // ...
             new Nelmio\CorsBundle\NelmioCorsBundle(),
             // ...
-        );
+        ];
         // ...
     }
 ```
