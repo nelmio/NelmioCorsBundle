@@ -143,7 +143,7 @@ class CorsListener
         }
 
         if (!$this->checkOrigin($request, $options)) {
-            $response->headers->set('Access-Control-Allow-Origin', 'null');
+            $response->headers->remove('Access-Control-Allow-Origin');
 
             return $response;
         }
