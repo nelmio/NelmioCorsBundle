@@ -197,7 +197,7 @@ class CorsListenerTest extends TestCase
         $dispatcher = m::mock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
         $dispatcher->shouldReceive('addListener')->times(0);
 
-        $event = new ResponseEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST);
+        $event = new RequestEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST);
         $this->getListener($dispatcher, $options)->onKernelRequest($event);
         $resp = $event->getResponse();
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $resp);
