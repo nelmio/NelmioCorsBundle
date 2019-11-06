@@ -1,6 +1,6 @@
 {
     "name": "nelmio/cors-bundle",
-    "description": "Adds CORS (Cross-Origin Resource Sharing) headers support in your Symfony2 application",
+    "description": "Adds CORS (Cross-Origin Resource Sharing) headers support in your Symfony application",
     "keywords": ["cors", "crossdomain", "api"],
     "type": "symfony-bundle",
     "license": "MIT",
@@ -15,12 +15,11 @@
         }
     ],
     "require": {
-        "symfony/framework-bundle": "^2.7 || ^3.0 || ^4.0"
+        "symfony/framework-bundle": "^4.3 || ^5.0"
     },
     "require-dev": {
-        "matthiasnoback/symfony-dependency-injection-test": "^1.0 || ^2.0",
-        "mockery/mockery": "^0.9 || ^1.0",
-        "symfony/phpunit-bridge": "^2.7 || ^3.0 || ^4.0"
+        "mockery/mockery": "^1.2",
+        "symfony/phpunit-bridge": "^4.3 || ^5.0"
     },
     "autoload": {
         "psr-4": { "Nelmio\\CorsBundle\\": "" },
@@ -28,7 +27,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.5.x-dev"
+            "dev-master": "2.0.x-dev"
         }
     }
 }

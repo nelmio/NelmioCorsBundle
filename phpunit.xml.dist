@@ -8,8 +8,14 @@
     convertWarningsToExceptions = "true"
     processIsolation            = "false"
     stopOnFailure               = "false"
-    syntaxCheck                 = "false"
     bootstrap                   = "Tests/bootstrap.php">
+
+    <php>
+        <ini name="error_reporting" value="-1" />
+        <server name="SHELL_VERBOSITY" value="-1" />
+        <server name="SYMFONY_DEPRECATIONS_HELPER" value="max[direct]=0" />
+        <server name="SYMFONY_PHPUNIT_VERSION" value="7.5" />
+    </php>
 
     <testsuites>
         <testsuite name="NelmioCorsBundle Test Suite">

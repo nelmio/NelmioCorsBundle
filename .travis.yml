@@ -1,12 +1,9 @@
 language: php
 
 php:
-  - 5.4
-  - 5.5
-  - 5.6
-  - 7.0
   - 7.1
   - 7.2
+  - 7.3
 
 sudo: false
 
@@ -14,8 +11,4 @@ before_install:
   - COMPOSER_MEMORY_LIMIT=-1 composer update
 
 script: |
-  if [[ $TRAVIS_PHP_VERSION = 7.* ]]; then
-      SYMFONY_PHPUNIT_VERSION=6.4 ./vendor/bin/simple-phpunit
-  else
-      ./vendor/bin/simple-phpunit
-  fi
+  ./vendor/bin/simple-phpunit
