@@ -142,6 +142,10 @@ class CorsListener
             $response->headers->set('Access-Control-Max-Age', $options['max_age']);
         }
 
+        if (0 === count($options['allow_origin'])) {
+            return $response;
+        }
+
         if (!$this->checkOrigin($request, $options)) {
             $response->headers->remove('Access-Control-Allow-Origin');
 
