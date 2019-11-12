@@ -130,7 +130,7 @@ class CorsListener
             $response->headers->set('Access-Control-Allow-Methods', implode(', ', $options['allow_methods']));
         }
         if ($options['allow_headers']) {
-            $headers = $options['allow_headers'] === true
+            $headers = $this->isWildcard($options, 'allow_headers')
                 ? $request->headers->get('Access-Control-Request-Headers')
                 : implode(', ', $options['allow_headers']);
 
@@ -169,7 +169,7 @@ class CorsListener
 
         // check request headers
         $headers = $request->headers->get('Access-Control-Request-Headers');
-        if ($options['allow_headers'] !== true && $headers) {
+        if (!$this->isWildcard($options, 'allow_headers') && $headers) {
             $headers = trim(strtolower($headers));
             foreach (preg_split('{, *}', $headers) as $header) {
                 if (in_array($header, self::$simpleHeaders, true)) {
@@ -191,7 +191,7 @@ class CorsListener
         // check origin
         $origin = $request->headers->get('Origin');
 
-        if ($options['allow_origin'] === true) {
+        if ($this->isWildcard($options, 'allow_origin')) {
             return true;
         }
 
@@ -210,5 +210,10 @@ class CorsListener
         }
 
         return false;
+    }
+
+    private function isWildcard(array $options, string $option): bool
+    {
+        return $options[$option] === true || (is_array($options[$option]) && in_array('*', $options[$option]));
     }
 }
