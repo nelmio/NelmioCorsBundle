@@ -1,3 +1,13 @@
+### 2.0.0 (2019-11-12)
+
+  * BC Break: Downgraded CorsListener priority from 250 to 28, this should not affect anyone but could be a source in case of strange bugs
+  * BC Break: Removed support for Symfony <4.3
+  * BC Break: Removed support for PHP <7.1
+  * Added support for Symfony 5
+  * Added support for configuration via env vars
+  * Changed the code to avoid mutating the EventDispatcher at runtime
+  * Changed the code to avoid returning `Access-Control-Allow-Origin: null` headers to mark blocked requests
+
 ### 1.5.6 (2019-06-17)
 
   * Fixed preflight request handler hijacking regular non-CORS OPTIONS requests.
@@ -20,7 +30,7 @@
   * Fixed bundle initialization in case paths is empty
 
 ### 1.5.1 (2017-01-22)
- 
+
   * Fixed `forced_allow_origin_value` to always set the header regardless of CORS, so that requests can properly be cached even if they are not always accessed via CORS
 
 ### 1.5.0 (2016-12-30)
