@@ -1,3 +1,7 @@
+### 2.0.1 (2019-11-15)
+
+  * Reverted CorsListener priority change as it was interfering with normal operations. The priority is back at 250.
+
 ### 2.0.0 (2019-11-12)
 
   * BC Break: Downgraded CorsListener priority from 250 to 28, this should not affect anyone but could be a source in case of strange bugs
