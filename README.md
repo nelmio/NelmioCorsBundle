@@ -47,7 +47,7 @@ Add the NelmioCorsBundle to your application's kernel:
 Symfony Flex generates a default configuration in `config/packages/nelmio_cors.yaml`.
 
 The `defaults` are the default values applied to all the `paths` that match,
-unless overriden in a specific URL configuration. If you want them to apply
+unless overridden in a specific URL configuration. If you want them to apply
 to everything, you must define a path with `^/`.
 
 This example config contains all the possible config values with their default
@@ -106,7 +106,7 @@ only this specific domain will be allowed to access your resources.
 
 ### How to ignore preflight requests on New Relic?
 
-On specific architectures with a moslty authenticated API, preflight request can represent a huge part of the traffic.
+On specific architectures with a mostly authenticated API, preflight request can represent a huge part of the traffic.
 
 In such cases, you may not need to monitor on New Relic this traffic which is by the way categorized automatically as
 `unknown` by New Relic.
