@@ -1,3 +1,7 @@
+### 2.1.0 (2020-07-22)
+
+  * Added `Vary: Origin` header to cacheable responses to make sure proxies cache them correctly
+
 ### 2.0.1 (2019-11-15)
 
   * Reverted CorsListener priority change as it was interfering with normal operations. The priority is back at 250.
