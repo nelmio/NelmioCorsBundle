@@ -24,5 +24,9 @@
             <argument>%nelmio_cors.defaults%</argument>
             <tag name="nelmio_cors.options_provider" priority="-1" />
         </service>
+
+        <service id="nelmio_cors.cacheable_response_vary_listener" class="Nelmio\CorsBundle\EventListener\CacheableResponseVaryListener">
+            <tag name="kernel.event_listener" event="kernel.response" method="onResponse" />
+        </service>
     </services>
 </container>
