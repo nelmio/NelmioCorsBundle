@@ -31,7 +31,7 @@ class CacheableResponseVaryListenerTest extends TestCase
         $this->response->setTtl(300);
         $this->listener->onResponse($this->event);
 
-        self::assertContains('Origin', $this->event->getResponse()->headers->get('Vary'));
+        self::assertStringContainsString('Origin', $this->event->getResponse()->headers->get('Vary'));
     }
 
     public function testOriginIsNotAddedAsVaryHeaderOnNonCacheableResponse()
