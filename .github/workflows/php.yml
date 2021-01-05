@@ -13,9 +13,6 @@ jobs:
           - 7.4
           - 8.0
 
-    # tests with php 8.0 are failing for now
-    continue-on-error: ${{ matrix.php-version == '8.0' }}
-
     runs-on: ubuntu-latest
 
     steps:
