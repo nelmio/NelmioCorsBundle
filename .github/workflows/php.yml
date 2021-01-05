@@ -6,7 +6,12 @@ jobs:
   test:
     strategy:
       matrix:
-        php-version: ['7.3', '7.4', '8.0']
+        php-version:
+          - 7.1
+          - 7.2
+          - 7.3
+          - 7.4
+          - 8.0
 
     # tests with php 8.0 are failing for now
     continue-on-error: ${{ matrix.php-version == '8.0' }}
