@@ -176,8 +176,9 @@ class CorsListener
                     continue;
                 }
                 if (!in_array($header, $options['allow_headers'], true)) {
+                    $sanitizedMessage = htmlentities('Unauthorized header '.$header, ENT_QUOTES, 'UTF-8');
                     $response->setStatusCode(400);
-                    $response->setContent('Unauthorized header '.$header);
+                    $response->setContent($sanitizedMessage);
                     break;
                 }
             }
