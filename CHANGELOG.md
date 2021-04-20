@@ -1,3 +1,5 @@
+Newer changelog entries can be found in the [GitHub Releases](https://github.com/nelmio/NelmioCorsBundle/releases)
+
 ### 2.1.0 (2020-07-22)
 
   * Added `Vary: Origin` header to cacheable responses to make sure proxies cache them correctly
