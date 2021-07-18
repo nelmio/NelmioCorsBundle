@@ -12,6 +12,9 @@ jobs:
           - 7.3
           - 7.4
           - 8.0
+        include:
+          - php-version: 8.0
+            stability: dev
 
     runs-on: ubuntu-latest
 
@@ -27,6 +30,10 @@ jobs:
 
       - name: Validate composer.json
         run: composer validate
+
+      - name: Configure Composer minimum stability
+        if: matrix.stability
+        run: composer config minimum-stability ${{ matrix.stability }}
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-suggest
