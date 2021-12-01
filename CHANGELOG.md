@@ -1,5 +1,13 @@
 Newer changelog entries can be found in the [GitHub Releases](https://github.com/nelmio/NelmioCorsBundle/releases)
 
+### 2.2.0 (2021-12-01)
+
+  * Added support for Symfony 6
+
+### 2.1.1 (2021-04-20)
+
+  * Fixed response for unauthorized headers containing a reflected XSS (https://github.com/nelmio/NelmioCorsBundle/pull/163)
+
 ### 2.1.0 (2020-07-22)
 
   * Added `Vary: Origin` header to cacheable responses to make sure proxies cache them correctly
