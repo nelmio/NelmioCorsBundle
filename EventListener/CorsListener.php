@@ -68,7 +68,7 @@ class CorsListener
             return;
         }
 
-        if (true !== $options['skip_same_as_origin'] && $request->headers->get('Origin') === $request->getSchemeAndHttpHost()) {
+        if ($options['skip_same_as_origin'] && $request->headers->get('Origin') === $request->getSchemeAndHttpHost()) {
             return;
         }
 
