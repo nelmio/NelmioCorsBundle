@@ -70,6 +70,7 @@ seconds.
             hosts: []
             origin_regex: false
             forced_allow_origin_value: ~
+            skip_same_as_origin: true
         paths:
             '^/api/':
                 allow_origin: ['*']
