@@ -15,7 +15,8 @@
         }
     ],
     "require": {
-        "symfony/framework-bundle": "^4.4 || ^5.4 || ^6.0"
+        "symfony/framework-bundle": "^4.4 || ^5.4 || ^6.0",
+        "psr/log": "^1.0"
     },
     "require-dev": {
         "mockery/mockery": "^1.2",
