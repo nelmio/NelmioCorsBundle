@@ -12,6 +12,7 @@ this [image](http://www.html5rocks.com/static/images/cors_server_flowchart.png).
 
 * Handles CORS preflight OPTIONS requests
 * Adds CORS headers to your responses
+* Configured at the PHP/application level. This is convenient but it also means that any request serving static files and not going through Symfony will not have the CORS headers added, so if you need to serve CORS for static files you probably should rather configure these headers in your web server
 
 ## Installation
 
