@@ -11,5 +11,5 @@ final class ProviderMock implements ProviderInterface
 {
     public function __construct() {}
 
-    public function getOptions(Request $request): void {}
+    public function getOptions(Request $request): array {}
 }
