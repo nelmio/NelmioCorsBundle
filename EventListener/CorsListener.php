@@ -50,10 +50,10 @@ class CorsListener
     {
         $this->configurationResolver = $configurationResolver;
 
-	if (null === $logger) {
+        if (null === $logger) {
             $logger = new NullLogger();
-	}
-	$this->logger = $logger;
+        }
+        $this->logger = $logger;
     }
 
     public function onKernelRequest(RequestEvent $event): void
