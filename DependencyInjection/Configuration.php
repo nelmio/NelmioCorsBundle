@@ -49,6 +49,7 @@ class Configuration implements ConfigurationInterface
                     ->append($this->getHosts())
                     ->append($this->getOriginRegex())
                     ->append($this->getForcedAllowOriginValue())
+                    ->append($this->getSkipSameAsOrigin())
                 ->end()
 
                 ->arrayNode('paths')
@@ -64,11 +65,20 @@ class Configuration implements ConfigurationInterface
                         ->append($this->getHosts())
                         ->append($this->getOriginRegex())
                         ->append($this->getForcedAllowOriginValue())
+                        ->append($this->getSkipSameAsOrigin())
                     ->end()
                 ->end()
             ;
 
         return $treeBuilder;
+    }
+
+    private function getSkipSameAsOrigin(): BooleanNodeDefinition
+    {
+        $node = new BooleanNodeDefinition('skip_same_as_origin');
+        $node->defaultTrue();
+
+        return $node;
     }
 
     private function getAllowCredentials(): BooleanNodeDefinition

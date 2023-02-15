@@ -64,7 +64,11 @@ class CorsListener
         }
 
         // skip if not a CORS request
-        if (!$request->headers->has('Origin') || $request->headers->get('Origin') === $request->getSchemeAndHttpHost()) {
+        if (!$request->headers->has('Origin')) {
+            return;
+        }
+
+        if ($options['skip_same_as_origin'] && $request->headers->get('Origin') === $request->getSchemeAndHttpHost()) {
             return;
         }
 
