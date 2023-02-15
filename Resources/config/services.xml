@@ -26,7 +26,7 @@
         </service>
 
         <service id="nelmio_cors.cacheable_response_vary_listener" class="Nelmio\CorsBundle\EventListener\CacheableResponseVaryListener">
-            <tag name="kernel.event_listener" event="kernel.response" method="onResponse" />
+            <tag name="kernel.event_listener" event="kernel.response" method="onResponse" priority="-10" />
         </service>
     </services>
 </container>

@@ -19,7 +19,9 @@ An official [Symfony Flex](https://symfony.com/doc/current/setup/flex.html) reci
 is available for this bundle.
 To automatically install and configure it run:
 
-    $ composer req cors
+```bash
+composer req cors
+```
 
 You're done!
 
@@ -68,6 +70,7 @@ seconds.
             hosts: []
             origin_regex: false
             forced_allow_origin_value: ~
+            skip_same_as_origin: true
         paths:
             '^/api/':
                 allow_origin: ['*']

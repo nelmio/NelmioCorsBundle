@@ -88,7 +88,7 @@ class CorsListener
             return;
         }
 
-        if ($request->headers->get('Origin') === $request->getSchemeAndHttpHost()) {
+        if ($options['skip_same_as_origin'] && $request->headers->get('Origin') === $request->getSchemeAndHttpHost()) {
             $this->logger->debug("The 'Origin' header of the request equals the scheme and host the request was sent to, skipping CORS.");
 
             return;
