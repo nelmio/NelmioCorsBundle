@@ -90,6 +90,9 @@ seconds.
 `allow_origin` and `allow_headers` can be set to `*` to accept any value, the
 allowed methods however have to be explicitly listed. `paths` must contain at least one item.
 
+`expose_headers` can be set to `*` to accept any value as long as `allow_credentials` is `false`
+[as per the specification](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Expose-Headers).
+
 If `origin_regex` is set, `allow_origin` must be a list of regular expressions matching
 allowed origins. Remember to use `^` and `$` to clearly define the boundaries of the regex.
 

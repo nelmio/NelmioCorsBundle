@@ -43,6 +43,10 @@ class NelmioCorsExtension extends Extension
             $config['defaults']
         );
 
+        if ($defaults['allow_credentials'] && in_array('*', $defaults['expose_headers'], true)) {
+            throw new \UnexpectedValueException('nelmio_cors expose_headers cannot contain a wildcard (*) when allow_credentials is enabled.');
+        }
+
         // normalize array('*') to true
         if (in_array('*', $defaults['allow_origin'])) {
             $defaults['allow_origin'] = true;
