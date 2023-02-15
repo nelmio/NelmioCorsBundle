@@ -43,17 +43,17 @@ class CorsListener
     /** @var ResolverInterface */
     protected $configurationResolver;
 
-    private LoggerInterface $logger;
+    /** @var LoggerInterface */
+    private $logger;
 
     public function __construct(ResolverInterface $configurationResolver, ?LoggerInterface $logger = null)
     {
         $this->configurationResolver = $configurationResolver;
 
 	if (null === $logger) {
-            $this->logger = new NullLogger();
-	} else {
-            $this->logger = $logger;
-        }
+            $logger = new NullLogger();
+	}
+	$this->logger = $logger;
     }
 
     public function onKernelRequest(RequestEvent $event): void
