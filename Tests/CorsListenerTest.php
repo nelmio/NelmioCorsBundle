@@ -40,6 +40,7 @@ class CorsListenerTest extends TestCase
                 'hosts' => [],
                 'origin_regex' => false,
                 'forced_allow_origin_value' => null,
+                'skip_same_as_origin' => true,
             ],
             $options
         );
