@@ -7,8 +7,6 @@ headers with ACL-style per-URL configuration.
 
 ## Features
 
-Read [the docs][2] for the details and configuration needed for each feature:
-
 * Handles CORS preflight OPTIONS requests
 * Adds CORS headers to your responses
 * Configured at the PHP/application level. This is convenient but it also means
@@ -24,6 +22,10 @@ Require the `nelmio/security-bundle` package in your composer.json and update yo
 
 The bundle should be automatically enabled by [Symfony Flex][1]. If you don't use
 Flex, you'll need to enable it manually as explained [in the docs][2].
+
+## Usage
+
+See [the documentation][2] for usage instructions.
 
 ## License
 
