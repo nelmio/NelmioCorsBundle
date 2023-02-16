@@ -32,4 +32,4 @@ See [the documentation][2] for usage instructions.
 Released under the MIT License, see LICENSE.
 
 [1]: https://symfony.com/doc/current/setup/flex.html
-[2]: Resources/doc/index.rst
+[2]: https://symfony.com/bundles/NelmioCorsBundle/current/index.html
