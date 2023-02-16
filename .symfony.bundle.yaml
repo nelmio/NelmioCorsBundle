@@ -1,0 +1,8 @@
+branches:
+    - master
+maintained_branches:
+    - master
+current_branch: master
+dev_branch: master
+doc_dir: Resources/doc/
+dev_branch_alias: 2.x
