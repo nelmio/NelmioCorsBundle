@@ -32,7 +32,7 @@ the ``config/bundles.php`` file of your project::
 
 If you don't have a ``config/bundles.php`` file in your project, chances are that
 you're using an older Symfony version. In this case, you should have an
-``app/AppKernel.php`` file instead. Edit such file:
+``app/AppKernel.php`` file instead. Edit such file::
 
     <?php
     // app/AppKernel.php
