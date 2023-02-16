@@ -7,6 +7,8 @@ headers with ACL-style per-URL configuration.
 
 ## Features
 
+Read [the docs][2] for the details and configuration needed for each feature:
+
 * Handles CORS preflight OPTIONS requests
 * Adds CORS headers to your responses
 * Configured at the PHP/application level. This is convenient but it also means
@@ -28,4 +30,4 @@ Flex, you'll need to enable it manually as explained [in the docs][2].
 Released under the MIT License, see LICENSE.
 
 [1]: https://symfony.com/doc/current/setup/flex.html
-[2]: src/Resources/doc/index.rst
+[2]: Resources/doc/index.rst
