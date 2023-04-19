@@ -42,10 +42,12 @@ class NelmioCorsExtension extends Extension
             ],
             $config['defaults']
         );
-
+       
         if ($defaults['allow_credentials'] && in_array('*', $defaults['expose_headers'], true)) {
             throw new \UnexpectedValueException('nelmio_cors expose_headers cannot contain a wildcard (*) when allow_credentials is enabled.');
         }
+
+        $isResolvedOpt = fn(mixed $opt): bool => $container->resolveEnvPlaceholders($opt) != $opt;
 
         // normalize array('*') to true
         if (in_array('*', $defaults['allow_origin'])) {
@@ -54,9 +56,9 @@ class NelmioCorsExtension extends Extension
         if (in_array('*', $defaults['allow_headers'])) {
             $defaults['allow_headers'] = true;
         } else {
-            $defaults['allow_headers'] = array_map('strtolower', $defaults['allow_headers']);
+            $defaults['allow_headers'] = array_map(fn($opt) => $isResolvedOpt($opt) ? $opt : strtolower($opt), $defaults['allow_headers']);
         }
-        $defaults['allow_methods'] = array_map('strtoupper', $defaults['allow_methods']);
+        $defaults['allow_methods'] = array_map(fn($opt) => $isResolvedOpt($opt) ? $opt : strtoupper($opt), $defaults['allow_methods']);
 
         if ($config['paths']) {
             foreach ($config['paths'] as $path => $opts) {
@@ -67,10 +69,10 @@ class NelmioCorsExtension extends Extension
                 if (isset($opts['allow_headers']) && in_array('*', $opts['allow_headers'])) {
                     $opts['allow_headers'] = true;
                 } elseif (isset($opts['allow_headers'])) {
-                    $opts['allow_headers'] = array_map('strtolower', $opts['allow_headers']);
+                    $opts['allow_headers'] = array_map(fn($opt) => $isResolvedOpt($opt) ? $opt : strtolower($opt), $opts['allow_headers']);
                 }
                 if (isset($opts['allow_methods'])) {
-                    $opts['allow_methods'] = array_map('strtoupper', $opts['allow_methods']);
+                    $opts['allow_methods'] = array_map(fn($opt) => $isResolvedOpt($opt) ? $opt : strtoupper($opt), $opts['allow_methods']);
                 }
 
                 $config['paths'][$path] = $opts;
