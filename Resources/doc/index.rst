@@ -77,6 +77,7 @@ seconds.
             allow_origin: []
             allow_headers: []
             allow_methods: []
+            allow_private_network: false
             expose_headers: []
             max_age: 0
             hosts: []
@@ -102,7 +103,7 @@ the allowed methods however have to be explicitly listed. ``paths`` must
 contain at least one item.
 
 ``expose_headers`` can be set to ``*`` to accept any value as long as
-``allow_credentials`` is ``false`` `as per the specification`_.
+``allow_credentials`` and ``allow_private_network`` are ``false`` `as per the specification`_.
 
 If ``origin_regex`` is set, ``allow_origin`` must be a list of regular
 expressions matching allowed origins. Remember to use ``^`` and ``$`` to
