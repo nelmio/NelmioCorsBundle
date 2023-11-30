@@ -58,7 +58,7 @@ class CorsListener
 
     public function onKernelRequest(RequestEvent $event): void
     {
-        if (HttpKernelInterface::MASTER_REQUEST !== $event->getRequestType()) {
+        if (HttpKernelInterface::MAIN_REQUEST !== $event->getRequestType()) {
             $this->logger->debug('Not a master type request, skipping CORS checks.');
 
             return;
@@ -116,7 +116,7 @@ class CorsListener
 
     public function onKernelResponse(ResponseEvent $event): void
     {
-        if (HttpKernelInterface::MASTER_REQUEST !== $event->getRequestType()) {
+        if (HttpKernelInterface::MAIN_REQUEST !== $event->getRequestType()) {
             $this->logger->debug("Not a master type request, skip adding CORS response headers.");
 
             return;
