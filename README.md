@@ -18,7 +18,9 @@ headers with ACL-style per-URL configuration.
 
 Require the `nelmio/security-bundle` package in your composer.json and update your dependencies:
 
-    $ composer require nelmio/cors-bundle
+```bash
+composer require nelmio/cors-bundle
+```
 
 The bundle should be automatically enabled by [Symfony Flex][1]. If you don't use
 Flex, you'll need to enable it manually as explained [in the docs][2].
