@@ -1,10 +1,5 @@
 Newer changelog entries can be found in the [GitHub Releases](https://github.com/nelmio/NelmioCorsBundle/releases)
 
-### 2.4.0 (2021-12-01)
-
-* Added support for Symfony 7
-* Dropped support for Symfony 4
-
 ### 2.3.0 (2023-02-15)
 
   * Downgraded `CacheableResponseVaryListener`'s priority from 0 to -10 to ensure it runs after FrameworkExtraBundle listeners have set their cache headers (#179)
