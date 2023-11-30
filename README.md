@@ -16,7 +16,7 @@ headers with ACL-style per-URL configuration.
 
 ## Installation
 
-Require the `nelmio/security-bundle` package in your composer.json and update your dependencies:
+Require the `nelmio/cors-bundle` package in your composer.json and update your dependencies:
 
     $ composer require nelmio/cors-bundle
 
