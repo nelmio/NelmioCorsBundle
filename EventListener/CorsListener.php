@@ -95,7 +95,10 @@ class CorsListener
         }
 
         // perform preflight checks
-        if ('OPTIONS' === $request->getMethod() && $request->headers->has('Access-Control-Request-Method')) {
+        if ('OPTIONS' === $request->getMethod() &&
+            ($request->headers->has('Access-Control-Request-Method') ||
+                $request->headers->has('Access-Control-Request-Private-Network'))
+        ) {
             $this->logger->debug("Request is a preflight check, setting event response now.");
 
             $event->setResponse($this->getPreflightResponse($request, $options));
@@ -216,6 +219,20 @@ class CorsListener
         $this->logger->debug(sprintf("Setting 'Access-Control-Allow-Origin' response header to '%s'", $origin));
 
         $response->headers->set('Access-Control-Allow-Origin', $origin);
+
+        // check private network access
+        if ($request->headers->has('Access-Control-Request-Private-Network')
+            && strtolower($request->headers->get('Access-Control-Request-Private-Network')) === 'true'
+        ) {
+            if ($options['allow_private_network']) {
+                $this->logger->debug("Setting 'Access-Control-Allow-Private-Network' response header to 'true'.");
+
+                $response->headers->set('Access-Control-Allow-Private-Network', 'true');
+            } else {
+                $response->setStatusCode(400);
+                $response->setContent('Private Network Access is not allowed.');
+            }
+        }
 
         // check request method
         $method = strtoupper($request->headers->get('Access-Control-Request-Method'));

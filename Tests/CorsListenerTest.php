@@ -36,6 +36,7 @@ class CorsListenerTest extends TestCase
                 'allow_headers' => [],
                 'expose_headers' => [],
                 'allow_methods' => [],
+                'allow_private_network' => false,
                 'max_age' => 0,
                 'hosts' => [],
                 'origin_regex' => false,
@@ -257,5 +258,80 @@ class CorsListenerTest extends TestCase
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $resp);
         $this->assertEquals(200, $resp->getStatusCode());
         $this->assertEquals('*', $resp->headers->get('Access-Control-Allow-Origin'));
+    }
+
+    /**
+     * @param bool        $option
+     * @param string|null $header
+     * @param string|null $expectedHeader
+     * @param int         $expectedStatus
+     */
+    private function testPreflightedRequestWithPrivateNetworkAccess($option, $header, $expectedHeader, $expectedStatus): void
+    {
+        $options = [
+            'allow_origin' => [true],
+            'allow_headers' => ['foo', 'bar'],
+            'allow_methods' => ['POST', 'PUT'],
+            'allow_private_network' => $option,
+        ];
+
+        // preflight
+        $req = Request::create('/foo', 'OPTIONS');
+        $req->headers->set('Origin', 'http://example.com');
+        $req->headers->set('Access-Control-Request-Method', 'POST');
+        $req->headers->set('Access-Control-Request-Headers', 'Foo, BAR');
+        if ($header) {
+            $req->headers->set('Access-Control-Request-Private-Network', $header);
+        }
+
+        $dispatcher = m::mock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $event = new RequestEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST);
+        $this->getListener($options)->onKernelRequest($event);
+        $resp = $event->getResponse();
+        $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $resp);
+        $this->assertEquals($expectedStatus, $resp->getStatusCode());
+        $this->assertEquals('http://example.com', $resp->headers->get('Access-Control-Allow-Origin'));
+        $this->assertEquals('POST, PUT', $resp->headers->get('Access-Control-Allow-Methods'));
+        $this->assertEquals('foo, bar', $resp->headers->get('Access-Control-Allow-Headers'));
+        $this->assertEquals($expectedHeader, $resp->headers->get('Access-Control-Allow-Private-Network'));
+        $this->assertEquals(['Origin'], $resp->getVary());
+
+        // actual request
+        $req = Request::create('/foo', 'POST');
+        $req->headers->set('Origin', 'http://example.com');
+        $req->headers->set('Foo', 'huh');
+        $req->headers->set('BAR', 'lala');
+
+        $event = new RequestEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST);
+        $this->getListener($options)->onKernelRequest($event);
+        $event = new ResponseEvent(m::mock('Symfony\Component\HttpKernel\HttpKernelInterface'), $req, HttpKernelInterface::MASTER_REQUEST, new Response());
+        $this->getListener($options)->onKernelResponse($event);
+        $resp = $event->getResponse();
+        $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $resp);
+        $this->assertEquals(200, $resp->getStatusCode());
+        $this->assertEquals('http://example.com', $resp->headers->get('Access-Control-Allow-Origin'));
+        $this->assertEquals(null, $resp->headers->get('Access-Control-Allow-Methods'));
+        $this->assertEquals(null, $resp->headers->get('Access-Control-Allow-Headers'));
+        $this->assertEquals(null, $resp->headers->get('Access-Control-Allow-Private-Network'));
+    }
+
+    public function testPreflightedRequestWithPrivateNetworkAccessAllowedAndProvided(): void
+    {
+        $this->testPreflightedRequestWithPrivateNetworkAccess(true, 'true', 'true', 200);
+    }
+
+    public function testPreflightedRequestWithPrivateNetworkAccessAllowedButNotProvided(): void
+    {
+        $this->testPreflightedRequestWithPrivateNetworkAccess(true, null, null, 200);
+    }
+
+    public function testPreflightedRequestWithPrivateNetworkAccessForbiddenButProvided(): void
+    {
+        $this->testPreflightedRequestWithPrivateNetworkAccess(false, 'true', null, 400);
+    }
+
+    public function testPreflightedRequestWithPrivateNetworkAccessForbiddenAndNotProvided(): void
+    {
+        $this->testPreflightedRequestWithPrivateNetworkAccess(false, null, null, 200);
     }
 }

@@ -29,6 +29,7 @@ interface ProviderInterface
      * - bool allow_credentials
      * - bool allow_origin
      * - bool allow_headers
+     * - bool allow_private_network
      * - bool origin_regex
      * - array allow_methods
      * - array expose_headers

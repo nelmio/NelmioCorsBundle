@@ -44,6 +44,7 @@ class Configuration implements ConfigurationInterface
                     ->append($this->getAllowOrigin())
                     ->append($this->getAllowHeaders())
                     ->append($this->getAllowMethods())
+                    ->append($this->getAllowPrivateNetwork())
                     ->append($this->getExposeHeaders())
                     ->append($this->getMaxAge())
                     ->append($this->getHosts())
@@ -60,6 +61,7 @@ class Configuration implements ConfigurationInterface
                         ->append($this->getAllowOrigin())
                         ->append($this->getAllowHeaders())
                         ->append($this->getAllowMethods())
+                        ->append($this->getAllowPrivateNetwork())
                         ->append($this->getExposeHeaders())
                         ->append($this->getMaxAge())
                         ->append($this->getHosts())
@@ -133,6 +135,14 @@ class Configuration implements ConfigurationInterface
         $node = new ArrayNodeDefinition('allow_methods');
 
         $node->prototype('scalar')->end();
+
+        return $node;
+    }
+
+    private function getAllowPrivateNetwork(): BooleanNodeDefinition
+    {
+        $node = new BooleanNodeDefinition('allow_private_network');
+        $node->defaultFalse();
 
         return $node;
     }
