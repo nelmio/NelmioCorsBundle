@@ -11,10 +11,11 @@
 
 namespace Nelmio\CorsBundle\DependencyInjection;
 
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\BooleanNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\IntegerNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\ScalarNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\Builder\VariableNodeDefinition;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
@@ -89,95 +90,61 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function getAllowOrigin(): ArrayNodeDefinition
+    private function getAllowOrigin(): VariableNodeDefinition
     {
-        $node = new ArrayNodeDefinition('allow_origin');
+        $node = new VariableNodeDefinition('allow_origin');
 
-        $node
-            ->beforeNormalization()
-                ->always(function ($v) {
-                    if ($v === '*') {
-                        return ['*'];
-                    }
-
-                    return $v;
-                })
-            ->end()
-            ->prototype('scalar')->end()
-        ;
+        $node->defaultValue([]);
 
         return $node;
     }
 
-    private function getAllowHeaders(): ArrayNodeDefinition
+    private function getAllowHeaders(): VariableNodeDefinition
     {
-        $node = new ArrayNodeDefinition('allow_headers');
+        $node = new VariableNodeDefinition('allow_headers');
 
-        $node
-            ->beforeNormalization()
-                ->always(function ($v) {
-                    if ($v === '*') {
-                        return ['*'];
-                    }
-
-                    return $v;
-                })
-            ->end()
-            ->prototype('scalar')->end();
+        $node->defaultValue([]);
 
         return $node;
     }
 
-    private function getAllowMethods(): ArrayNodeDefinition
+    private function getAllowMethods(): VariableNodeDefinition
     {
-        $node = new ArrayNodeDefinition('allow_methods');
+        $node = new VariableNodeDefinition('allow_methods');
 
-        $node->prototype('scalar')->end();
+        $node->defaultValue([]);
 
         return $node;
     }
 
-    private function getExposeHeaders(): ArrayNodeDefinition
+    private function getExposeHeaders(): VariableNodeDefinition
     {
-        $node = new ArrayNodeDefinition('expose_headers');
+        $node = new VariableNodeDefinition('expose_headers');
 
-        $node
-            ->beforeNormalization()
-                ->always(function ($v) {
-                    if ($v === '*') {
-                        return ['*'];
-                    }
-
-                    return $v;
-                })
-            ->end()
-            ->prototype('scalar')->end();
+        $node->defaultValue([]);
 
         return $node;
     }
 
     private function getMaxAge(): ScalarNodeDefinition
     {
-        $node = new ScalarNodeDefinition('max_age');
+        $node = new IntegerNodeDefinition('max_age');
 
         $node
             ->defaultValue(0)
-            ->validate()
-                ->ifTrue(function ($v) {
-                    return !is_numeric($v);
-                })
-                ->thenInvalid('max_age must be an integer (seconds)')
+            ->min(0)
+            ->info('The value of the Access-Control-Max-Age header (in seconds).')
             ->end()
         ;
 
         return $node;
     }
 
-    private function getHosts(): ArrayNodeDefinition
+    private function getHosts(): VariableNodeDefinition
     {
-        $node = new ArrayNodeDefinition('hosts');
+        $node = new VariableNodeDefinition('hosts');
 
-        $node->prototype('scalar')->end();
+        $node->defaultValue([]);
 
         return $node;
     }
