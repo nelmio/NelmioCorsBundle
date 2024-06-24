@@ -18,7 +18,7 @@ class ConfigProviderTest extends TestCase
     protected $defaultOptions = [
         'allow_credentials' => false,
         'allow_origin' => ['http://one.example.com'],
-        'allow_headers' => false,
+        'allow_headers' => [],
         'allow_methods' => ['GET'],
         'expose_headers' => [],
         'max_age' => 0,

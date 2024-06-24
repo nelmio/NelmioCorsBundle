@@ -25,7 +25,12 @@ class ConfigProvider implements ProviderInterface
 
     public function __construct(array $paths, array $defaults = [])
     {
-        $this->defaults = $defaults;
+        $this->defaults = $this->normalizeOptions($defaults);
+
+        foreach ($paths as $path => $options) {
+            $this->paths[$path] = $this->normalizeOptions($options);
+        }
+
         $this->paths = $paths;
     }
 
@@ -52,5 +57,37 @@ class ConfigProvider implements ProviderInterface
         }
 
         return $this->defaults;
+    }
+
+    private function normalizeOptions(array $options): array
+    {
+        foreach (['expose_headers', 'allow_origin', 'allow_headers', 'allow_methods', 'hosts'] as $key) {
+            if (isset($options[$key]) && is_array($options[$key]) === false) {
+                $options[$key] = [$options[$key]];
+            }
+        }
+
+        if (
+            isset($options['allow_credentials']) && isset($options['expose_headers']) &&
+            $options['allow_credentials'] && in_array('*', $options['expose_headers'], true)
+        ) {
+            throw new \UnexpectedValueException('nelmio_cors expose_headers cannot contain a wildcard (*) when allow_credentials is enabled.');
+        }
+
+        if (isset($options['allow_origin']) && in_array('*', $options['allow_origin'])) {
+            $options['allow_origin'] = true;
+        }
+
+        if (isset($options['allow_headers']) && in_array('*', $options['allow_headers'])) {
+            $options['allow_headers'] = true;
+        } else {
+            $options['allow_headers'] = array_map('strtolower', $options['allow_headers']);
+        }
+
+        if (isset($options['allow_methods'])) {
+            $options['allow_methods'] = array_map('strtoupper', $options['allow_methods']);
+        }
+
+        return $options;
     }
 }
