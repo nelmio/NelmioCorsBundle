@@ -9,7 +9,7 @@
  */
 namespace Nelmio\CorsBundle\Tests\Options;
 
-use Mockery as m;
+use PHPUnit\Framework\MockObject\MockObject;
 use Nelmio\CorsBundle\Options\ProviderInterface;
 use Nelmio\CorsBundle\Options\Resolver;
 use PHPUnit\Framework\TestCase;
@@ -28,20 +28,15 @@ class ResolverTest extends TestCase
 
     /**
      * Return value of the default (low priority) provider
-     * @var array
+     * @var array<string, string|string[]>
      */
     protected $defaultProviderValue;
 
     /**
      * Return value of the extra (high priority) provider
-     * @var array
+     * @var array<string, string|string[]>
      */
     protected $extraProviderValue;
-
-    public function tearDown(): void
-    {
-        m::close();
-    }
 
     public function testGetOptionsForPath(): void
     {
@@ -81,38 +76,36 @@ class ResolverTest extends TestCase
     }
 
     /**
-     * @return m\MockInterface|ProviderInterface
+     * @return ProviderInterface&MockObject
      */
     protected function getDefaultProviderMock(): ProviderInterface
     {
         $mock = $this->getProviderMock();
-        $mock
-            ->shouldReceive('getOptions')
-            ->once()
-            ->andReturn($this->defaultProviderValue);
+        $mock->expects($this->once())
+            ->method('getOptions')
+            ->willReturn($this->defaultProviderValue);
 
         return $mock;
     }
 
     /**
-     * @return m\MockInterface|ProviderInterface
+     * @return ProviderInterface&MockObject
      */
     protected function getExtraProviderMock(): ProviderInterface
     {
         $mock = $this->getProviderMock();
-        $mock
-            ->shouldReceive('getOptions')
-            ->once()
-            ->andReturn($this->extraProviderValue);
+        $mock->expects($this->once())
+            ->method('getOptions')
+            ->willReturn($this->extraProviderValue);
 
         return $mock;
     }
 
     /**
-     * @return m\MockInterface|ProviderInterface
+     * @return ProviderInterface&MockObject
      */
     protected function getProviderMock(): ProviderInterface
     {
-        return m::mock('Nelmio\CorsBundle\Options\ProviderInterface');
+        return $this->getMockBuilder('Nelmio\CorsBundle\Options\ProviderInterface')->getMock();
     }
 }

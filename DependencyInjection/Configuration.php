@@ -29,13 +29,7 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder('nelmio_cors');
 
-        if (method_exists($treeBuilder, 'getRootNode')) {
-            $rootNode = $treeBuilder->getRootNode();
-        } else {
-            // BC for symfony/config < 4.2
-            $rootNode = $treeBuilder->root('nelmio_cors');
-        }
-
+        $rootNode = $treeBuilder->getRootNode();
         $rootNode
             ->children()
                 ->arrayNode('defaults')

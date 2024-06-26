@@ -12,6 +12,7 @@
 namespace Nelmio\CorsBundle\EventListener;
 
 use Nelmio\CorsBundle\Options\ResolverInterface;
+use Nelmio\CorsBundle\Options\ProviderInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,16 +25,21 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  * Adds CORS headers and handles pre-flight requests
  *
  * @author Jordi Boggiano <j.boggiano@seld.be>
+ * @phpstan-import-type CorsCompleteOptions from ProviderInterface
  */
 class CorsListener
 {
-    const SHOULD_ALLOW_ORIGIN_ATTR = '_nelmio_cors_should_allow_origin';
-    const SHOULD_FORCE_ORIGIN_ATTR = '_nelmio_cors_should_force_origin';
+    public const SHOULD_ALLOW_ORIGIN_ATTR = '_nelmio_cors_should_allow_origin';
+    public const SHOULD_FORCE_ORIGIN_ATTR = '_nelmio_cors_should_force_origin';
 
     /**
      * Simple headers as defined in the spec should always be accepted
+     * @var list<string>
+     * @deprecated
      */
-    protected static $simpleHeaders = [
+    protected static $simpleHeaders = self::SIMPLE_HEADERS;
+
+    protected const SIMPLE_HEADERS = [
         'accept',
         'accept-language',
         'content-language',
@@ -66,6 +72,7 @@ class CorsListener
 
         $request = $event->getRequest();
 
+        // @phpstan-ignore booleanNot.alwaysFalse (an invalid overridden configuration resolver may not be trustworthy)
         if (!$options = $this->configurationResolver->getOptions($request)) {
             $this->logger->debug('Could not get options for request, skipping CORS checks.');
             return;
@@ -136,6 +143,7 @@ class CorsListener
             return;
         }
 
+        // @phpstan-ignore booleanNot.alwaysFalse (an invalid overridden configuration resolver may not be trustworthy)
         if (!$options = $this->configurationResolver->getOptions($request)) {
             $this->logger->debug("Could not resolve options for request, skip adding CORS response headers.");
 
@@ -166,12 +174,16 @@ class CorsListener
         }
 
         if ($shouldForceOrigin) {
+            assert(isset($options['forced_allow_origin_value']));
             $this->logger->debug(sprintf("Setting 'Access-Control-Allow-Origin' response header to '%s'.", $options['forced_allow_origin_value']));
 
             $event->getResponse()->headers->set('Access-Control-Allow-Origin', $options['forced_allow_origin_value']);
         }
     }
 
+    /**
+     * @phpstan-param CorsCompleteOptions $options
+     */
     protected function getPreflightResponse(Request $request, array $options): Response
     {
         $response = new Response();
@@ -192,7 +204,7 @@ class CorsListener
         if ($options['allow_headers']) {
             $headers = $this->isWildcard($options, 'allow_headers')
                 ? $request->headers->get('Access-Control-Request-Headers')
-                : implode(', ', $options['allow_headers']);
+                : implode(', ', $options['allow_headers']); // @phpstan-ignore argument.type (isWildcard guarantees this is an array but PHPStan does not know)
 
             if ($headers) {
                 $this->logger->debug(sprintf("Setting 'Access-Control-Allow-Headers' response header to '%s'.", $headers));
@@ -203,7 +215,7 @@ class CorsListener
         if ($options['max_age']) {
             $this->logger->debug(sprintf("Setting 'Access-Control-Max-Age' response header to '%d'.", $options['max_age']));
 
-            $response->headers->set('Access-Control-Max-Age', $options['max_age']);
+            $response->headers->set('Access-Control-Max-Age', (string) $options['max_age']);
         }
 
         if (!$this->checkOrigin($request, $options)) {
@@ -222,7 +234,7 @@ class CorsListener
 
         // check private network access
         if ($request->headers->has('Access-Control-Request-Private-Network')
-            && strtolower($request->headers->get('Access-Control-Request-Private-Network')) === 'true'
+            && strtolower((string) $request->headers->get('Access-Control-Request-Private-Network')) === 'true'
         ) {
             if ($options['allow_private_network']) {
                 $this->logger->debug("Setting 'Access-Control-Allow-Private-Network' response header to 'true'.");
@@ -235,7 +247,7 @@ class CorsListener
         }
 
         // check request method
-        $method = strtoupper($request->headers->get('Access-Control-Request-Method'));
+        $method = strtoupper((string) $request->headers->get('Access-Control-Request-Method'));
         if (!in_array($method, $options['allow_methods'], true)) {
             $this->logger->debug(sprintf("Method '%s' is not allowed.", $method));
 
@@ -250,7 +262,7 @@ class CorsListener
          * request.
          */
         if (!in_array($request->headers->get('Access-Control-Request-Method'), $options['allow_methods'], true)) {
-            $options['allow_methods'][] = $request->headers->get('Access-Control-Request-Method');
+            $options['allow_methods'][] = (string) $request->headers->get('Access-Control-Request-Method');
             $response->headers->set('Access-Control-Allow-Methods', implode(', ', $options['allow_methods']));
         }
 
@@ -258,11 +270,15 @@ class CorsListener
         $headers = $request->headers->get('Access-Control-Request-Headers');
         if ($headers && !$this->isWildcard($options, 'allow_headers')) {
             $headers = strtolower(trim($headers));
-            foreach (preg_split('{, *}', $headers) as $header) {
-                if (in_array($header, self::$simpleHeaders, true)) {
+            $splitHeaders = preg_split('{, *}', $headers);
+            if (false === $splitHeaders) {
+                throw new \RuntimeException('Failed splitting '.$headers);
+            }
+            foreach ($splitHeaders as $header) {
+                if (in_array($header, self::SIMPLE_HEADERS, true)) {
                     continue;
                 }
-                if (!in_array($header, $options['allow_headers'], true)) {
+                if (!in_array($header, $options['allow_headers'], true)) { // @phpstan-ignore argument.type (isWildcard guarantees this is an array but PHPStan does not know)
                     $sanitizedMessage = htmlentities('Unauthorized header '.$header, ENT_QUOTES, 'UTF-8');
                     $response->setStatusCode(400);
                     $response->setContent($sanitizedMessage);
@@ -274,10 +290,13 @@ class CorsListener
         return $response;
     }
 
+    /**
+     * @param CorsCompleteOptions $options
+     */
     protected function checkOrigin(Request $request, array $options): bool
     {
         // check origin
-        $origin = $request->headers->get('Origin');
+        $origin = (string) $request->headers->get('Origin');
 
         if ($this->isWildcard($options, 'allow_origin')) {
             return true;
@@ -285,7 +304,7 @@ class CorsListener
 
         if ($options['origin_regex'] === true) {
             // origin regex matching
-            foreach ($options['allow_origin'] as $originRegexp) {
+            foreach ($options['allow_origin'] as $originRegexp) { // @phpstan-ignore foreach.nonIterable (isWildcard guarantees this is an array but PHPStan does not know)
                 $this->logger->debug(sprintf("Matching origin regex '%s' to origin '%s'.", $originRegexp, $origin));
 
                 if (preg_match('{'.$originRegexp.'}i', $origin)) {
@@ -296,7 +315,7 @@ class CorsListener
             }
         } else {
             // old origin matching
-            if (in_array($origin, $options['allow_origin'])) {
+            if (in_array($origin, $options['allow_origin'], true)) { // @phpstan-ignore argument.type (isWildcard guarantees this is an array but PHPStan does not know)
                 $this->logger->debug(sprintf("Origin '%s' is allowed.", $origin));
 
                 return true;
@@ -308,9 +327,13 @@ class CorsListener
         return false;
     }
 
+    /**
+     * @phpstan-param CorsCompleteOptions $options
+     * @phpstan-param key-of<CorsCompleteOptions> $option
+     */
     private function isWildcard(array $options, string $option): bool
     {
-        $result = $options[$option] === true || (is_array($options[$option]) && in_array('*', $options[$option]));
+        $result = $options[$option] === true || (is_array($options[$option]) && in_array('*', $options[$option], true));
 
         $this->logger->debug(sprintf("Option '%s' is %s a wildcard.", $option, $result ? '' : 'not'));
 

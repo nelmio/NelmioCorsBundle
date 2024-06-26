@@ -11,8 +11,11 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class CacheableResponseVaryListenerTest extends TestCase
 {
+    /** @var CacheableResponseVaryListener */
     private $listener;
+    /** @var ResponseEvent */
     private $event;
+    /** @var Response */
     private $response;
 
     protected function setUp(): void
@@ -26,15 +29,15 @@ class CacheableResponseVaryListenerTest extends TestCase
         $this->listener = new CacheableResponseVaryListener();
     }
 
-    public function testOriginIsAddedAsVaryHeaderOnCacheableResponse()
+    public function testOriginIsAddedAsVaryHeaderOnCacheableResponse(): void
     {
         $this->response->setTtl(300);
         $this->listener->onResponse($this->event);
 
-        self::assertStringContainsString('Origin', $this->event->getResponse()->headers->get('Vary'));
+        self::assertStringContainsString('Origin', (string) $this->event->getResponse()->headers->get('Vary'));
     }
 
-    public function testOriginIsNotAddedAsVaryHeaderOnNonCacheableResponse()
+    public function testOriginIsNotAddedAsVaryHeaderOnNonCacheableResponse(): void
     {
         $this->listener->onResponse($this->event);
 

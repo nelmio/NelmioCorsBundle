@@ -1,10 +1,10 @@
 <?php
 
-function includeIfExists($file)
+use Composer\Autoload\ClassLoader;
+
+function includeIfExists(string $file): ?ClassLoader
 {
-    if (file_exists($file)) {
-        return include $file;
-    }
+    return file_exists($file) ? include $file : null;
 }
 
 if ((!$loader = includeIfExists(__DIR__.'/../vendor/autoload.php')) && (!$loader = includeIfExists(__DIR__.'/../../../../../autoload.php'))) {

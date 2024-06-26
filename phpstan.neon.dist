@@ -1,0 +1,19 @@
+parameters:
+    level: 8
+    paths:
+        - .
+    excludePaths:
+        - vendor/
+    ignoreErrors:
+
+    reportUnmatchedIgnoredErrors: true
+
+    bootstrapFiles:
+        - vendor/autoload.php
+
+includes:
+    - vendor/phpstan/phpstan-deprecation-rules/rules.neon
+    - vendor/phpstan/phpstan-symfony/extension.neon
+    - vendor/phpstan/phpstan-symfony/rules.neon
+    - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+    - vendor/phpstan/phpstan-phpunit/extension.neon

@@ -29,7 +29,7 @@ class CorsConfigurationProviderPass implements CompilerPassInterface
         $optionsProvidersByPriority = [];
         foreach ($container->findTaggedServiceIds('nelmio_cors.options_provider') as $taggedServiceId => $tagAttributes) {
             foreach ($tagAttributes as $attribute) {
-                $priority = isset($attribute['priority']) ? $attribute['priority'] : 0;
+                $priority = isset($attribute['priority']) ? (int) $attribute['priority'] : 0;
                 $optionsProvidersByPriority[$priority][] = new Reference($taggedServiceId);
             }
         }
@@ -43,7 +43,7 @@ class CorsConfigurationProviderPass implements CompilerPassInterface
 
     /**
      * Transforms a two-dimensions array of providers, indexed by priority, into a flat array of Reference objects
-     * @param  array       $providersByPriority
+     * @param  array<int, list<Reference>> $providersByPriority
      * @return Reference[]
      */
     protected function sortProviders(array $providersByPriority): array

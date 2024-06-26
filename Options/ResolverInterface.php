@@ -12,12 +12,16 @@ namespace Nelmio\CorsBundle\Options;
 
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @phpstan-import-type CorsCompleteOptions from ProviderInterface
+ */
 interface ResolverInterface
 {
     /**
-     * Returns CORS options for $path
+     * Returns CORS options for a request's path
      *
-     * @internal param string $path
+     * @return array<string, bool|array<string>|int> CORS options
+     * @phpstan-return CorsCompleteOptions
      */
     public function getOptions(Request $request): array;
 }

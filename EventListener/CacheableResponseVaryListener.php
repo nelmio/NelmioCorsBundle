@@ -9,7 +9,7 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
  */
 final class CacheableResponseVaryListener
 {
-    public function onResponse(ResponseEvent $event)
+    public function onResponse(ResponseEvent $event): void
     {
         $response = $event->getResponse();
 

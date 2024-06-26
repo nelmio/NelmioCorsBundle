@@ -20,12 +20,12 @@ class Resolver implements ResolverInterface
 {
     /**
      * CORS configuration providers, indexed by numerical priority
-     * @var ProviderInterface[][]
+     * @var list<ProviderInterface>
      */
     private $providers;
 
     /**
-     * @param $providers ProviderInterface[]
+     * @param list<ProviderInterface> $providers
      */
     public function __construct(array $providers = [])
     {
@@ -34,8 +34,6 @@ class Resolver implements ResolverInterface
 
     /**
      * Resolves the options for $request based on {@see $providers} data
-     *
-     * @return array CORS options
      */
     public function getOptions(Request $request): array
     {
@@ -44,6 +42,7 @@ class Resolver implements ResolverInterface
             $options[] = $provider->getOptions($request);
         }
 
+        // @phpstan-ignore return.type (the default ConfigProvider will ensure default array is always setting every key)
         return array_merge(...$options);
     }
 }

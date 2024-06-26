@@ -10,11 +10,19 @@
 namespace Nelmio\CorsBundle\Tests\Options;
 
 use Nelmio\CorsBundle\Options\ConfigProvider;
+use Nelmio\CorsBundle\Options\ProviderInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @phpstan-import-type CorsOptions from ProviderInterface
+ * @phpstan-import-type CorsCompleteOptions from ProviderInterface
+ */
 class ConfigProviderTest extends TestCase
 {
+    /**
+     * @phpstan-var CorsCompleteOptions
+     */
     protected $defaultOptions = [
         'allow_credentials' => false,
         'allow_origin' => ['http://one.example.com'],
@@ -24,8 +32,13 @@ class ConfigProviderTest extends TestCase
         'expose_headers' => [],
         'max_age' => 0,
         'hosts' => [],
+        'origin_regex' => false,
+        'skip_same_as_origin' => true,
     ];
 
+    /**
+     * @phpstan-var CorsOptions
+     */
     protected $pathOptions = [
         'allow_credentials' => true,
         'allow_origin' => ['http://two.example.com'],
@@ -37,6 +50,9 @@ class ConfigProviderTest extends TestCase
         'hosts' => [],
     ];
 
+    /**
+     * @phpstan-var CorsOptions
+     */
     protected $domainMatchOptions = [
         'allow_credentials' => true,
         'allow_origin' => ['http://domainmatch.example.com'],
@@ -48,6 +64,9 @@ class ConfigProviderTest extends TestCase
         'hosts' => ['^test\.', '\.example\.org$'],
     ];
 
+    /**
+     * @phpstan-var CorsOptions
+     */
     protected $noDomainMatchOptions = [
         'allow_credentials' => true,
         'allow_origin' => ['http://nomatch.example.com'],
@@ -59,6 +78,9 @@ class ConfigProviderTest extends TestCase
         'hosts' => ['^nomatch\.'],
     ];
 
+    /**
+     * @phpstan-var CorsOptions
+     */
     protected $originRegexOptions = [
         'allow_credentials' => true,
         'allow_origin' => ['^http://(.*)\.example\.com'],
@@ -86,7 +108,7 @@ class ConfigProviderTest extends TestCase
         $provider = $this->getProvider();
 
         self::assertEquals(
-            $this->pathOptions,
+            array_merge($this->defaultOptions, $this->pathOptions),
             $provider->getOptions(Request::create('/test/abc'))
         );
     }
@@ -96,7 +118,7 @@ class ConfigProviderTest extends TestCase
         $provider = $this->getProvider();
 
         self::assertEquals(
-            $this->domainMatchOptions,
+            array_merge($this->defaultOptions, $this->domainMatchOptions),
             $provider->getOptions(Request::create('/test/match', 'OPTIONS', [], [], [], ['HTTP_HOST' => 'test.example.com']))
         );
     }
@@ -106,7 +128,7 @@ class ConfigProviderTest extends TestCase
         $provider = $this->getProvider();
 
         self::assertEquals(
-            $this->domainMatchOptions,
+            array_merge($this->defaultOptions, $this->domainMatchOptions),
             $provider->getOptions(Request::create('/test/match', 'OPTIONS', [], [], [], ['HTTP_HOST' => 'foo.example.org']))
         );
     }
@@ -116,7 +138,7 @@ class ConfigProviderTest extends TestCase
         $provider = $this->getProvider();
 
         self::assertEquals(
-            $this->pathOptions,
+            array_merge($this->defaultOptions, $this->pathOptions),
             $provider->getOptions(Request::create('/test/nomatch', 'OPTIONS', [], [], [], ['HTTP_HOST' => 'example.com']))
         );
     }
@@ -126,7 +148,7 @@ class ConfigProviderTest extends TestCase
         $provider = $this->getProvider();
 
         self::assertEquals(
-            $this->originRegexOptions,
+            array_merge($this->defaultOptions, $this->originRegexOptions),
             $provider->getOptions(Request::create('/test/regex'))
         );
     }

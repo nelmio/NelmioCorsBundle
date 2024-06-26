@@ -11,5 +11,10 @@ final class ProviderMock implements ProviderInterface
 {
     public function __construct() {}
 
-    public function getOptions(Request $request): array {}
+    /**
+     * @return array<string, bool|int|string[]>
+     */
+    public function getOptions(Request $request): array {
+        return [];
+    }
 }

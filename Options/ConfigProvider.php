@@ -11,21 +11,37 @@
 namespace Nelmio\CorsBundle\Options;
 
 use Symfony\Component\HttpFoundation\Request;
+use Nelmio\CorsBundle\DependencyInjection\NelmioCorsExtension;
 
 /**
  * Default CORS configuration provider.
  *
  * Uses the bundle's semantic configuration.
  * Default settings are the lowest priority one, and can be relied upon.
+ *
+ * @phpstan-import-type CorsCompleteOptions from ProviderInterface
+ * @phpstan-import-type CorsOptionsPerPath from ProviderInterface
  */
 class ConfigProvider implements ProviderInterface
 {
+    /**
+     * @var CorsOptionsPerPath
+     */
     protected $paths;
+    /**
+     * @var array<string, bool|array<string>|int>
+     * @phpstan-var CorsCompleteOptions
+     */
     protected $defaults;
 
-    public function __construct(array $paths, array $defaults = [])
+    /**
+     * @param CorsOptionsPerPath $paths
+     * @param array<string, bool|array<string>|int> $defaults
+     * @phpstan-param CorsCompleteOptions $defaults
+     */
+    public function __construct(array $paths, ?array $defaults = null)
     {
-        $this->defaults = $defaults;
+        $this->defaults = $defaults === null ? NelmioCorsExtension::DEFAULTS : $defaults;
         $this->paths = $paths;
     }
 
