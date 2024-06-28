@@ -38,7 +38,7 @@ class Configuration implements ConfigurationInterface
                     ->append($this->getAllowOrigin())
                     ->append($this->getAllowHeaders())
                     ->append($this->getAllowMethods())
-                    ->append($this->getAllowPrivateNetwork())
+                    ->append($this->getAllowPrivateNetwork(true))
                     ->append($this->getExposeHeaders())
                     ->append($this->getMaxAge())
                     ->append($this->getHosts())
@@ -139,10 +139,13 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function getAllowPrivateNetwork(): BooleanNodeDefinition
+    private function getAllowPrivateNetwork(bool $withDefaultValue = false): BooleanNodeDefinition
     {
         $node = new BooleanNodeDefinition('allow_private_network');
-        $node->defaultFalse();
+
+        if ($withDefaultValue) {
+            $node->defaultFalse();
+        }
 
         return $node;
     }
