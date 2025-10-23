@@ -15,7 +15,6 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader;
-use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * @author Jordi Boggiano <j.boggiano@seld.be>
@@ -83,12 +82,7 @@ class NelmioCorsExtension extends Extension
         $container->setParameter('nelmio_cors.defaults', $defaults);
 
         $locator = new FileLocator(__DIR__.'/../Resources/config');
-        if (Kernel::VERSION_ID >= 70400) {
-            $loader = new Loader\PhpFileLoader($container, $locator);
-            $loader->load('services.php');
-        } else {
-            $loader = new Loader\XmlFileLoader($container, $locator);
-            $loader->load('services.xml');
-        }
+        $loader = new Loader\PhpFileLoader($container, $locator);
+        $loader->load('services.php');
     }
 }
