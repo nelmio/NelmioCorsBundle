@@ -62,7 +62,7 @@ return function (ContainerConfigurator $container): void {
         ->tag('kernel.event_listener', [
             'event' => 'kernel.response',
             'method' => 'onResponse',
-            'priority' => -10,
+            'priority' => -15,
         ])
     ;
 };
