@@ -14,7 +14,6 @@ namespace Nelmio\CorsBundle\EventListener;
 use Nelmio\CorsBundle\Options\ResolverInterface;
 use Nelmio\CorsBundle\Options\ProviderInterface;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -49,23 +48,19 @@ class CorsListener
     /** @var ResolverInterface */
     protected $configurationResolver;
 
-    /** @var LoggerInterface */
+    /** @var LoggerInterface|null */
     private $logger;
 
     public function __construct(ResolverInterface $configurationResolver, ?LoggerInterface $logger = null)
     {
         $this->configurationResolver = $configurationResolver;
-
-        if (null === $logger) {
-            $logger = new NullLogger();
-        }
         $this->logger = $logger;
     }
 
     public function onKernelRequest(RequestEvent $event): void
     {
         if (HttpKernelInterface::MAIN_REQUEST !== $event->getRequestType()) {
-            $this->logger->debug('Not a master type request, skipping CORS checks.');
+            $this->logger && $this->logger->debug('Not a master type request, skipping CORS checks.');
 
             return;
         }
@@ -74,13 +69,13 @@ class CorsListener
 
         // @phpstan-ignore booleanNot.alwaysFalse (an invalid overridden configuration resolver may not be trustworthy)
         if (!$options = $this->configurationResolver->getOptions($request)) {
-            $this->logger->debug('Could not get options for request, skipping CORS checks.');
+            $this->logger && $this->logger->debug('Could not get options for request, skipping CORS checks.');
             return;
         }
 
         // if the "forced_allow_origin_value" option is set, add a listener which will set or override the "Access-Control-Allow-Origin" header
         if (!empty($options['forced_allow_origin_value'])) {
-            $this->logger->debug(sprintf(
+            $this->logger && $this->logger->debug(sprintf(
                 "The 'forced_allow_origin_value' option is set to '%s', adding a listener to set or override the 'Access-Control-Allow-Origin' header.",
                 $options['forced_allow_origin_value']
             ));
@@ -90,13 +85,13 @@ class CorsListener
 
         // skip if not a CORS request
         if (!$request->headers->has('Origin')) {
-            $this->logger->debug("Request does not have 'Origin' header, skipping CORS.");
+            $this->logger && $this->logger->debug("Request does not have 'Origin' header, skipping CORS.");
 
             return;
         }
 
         if ($options['skip_same_as_origin'] && $request->headers->get('Origin') === $request->getSchemeAndHttpHost()) {
-            $this->logger->debug("The 'Origin' header of the request equals the scheme and host the request was sent to, skipping CORS.");
+            $this->logger && $this->logger->debug("The 'Origin' header of the request equals the scheme and host the request was sent to, skipping CORS.");
 
             return;
         }
@@ -106,7 +101,7 @@ class CorsListener
             ($request->headers->has('Access-Control-Request-Method') ||
                 $request->headers->has('Access-Control-Request-Private-Network'))
         ) {
-            $this->logger->debug("Request is a preflight check, setting event response now.");
+            $this->logger && $this->logger->debug("Request is a preflight check, setting event response now.");
 
             $event->setResponse($this->getPreflightResponse($request, $options));
 
@@ -114,12 +109,12 @@ class CorsListener
         }
 
         if (!$this->checkOrigin($request, $options)) {
-            $this->logger->debug("Origin check failed.");
+            $this->logger && $this->logger->debug("Origin check failed.");
 
             return;
         }
 
-        $this->logger->debug("Origin is allowed, proceed with adding CORS response headers.");
+        $this->logger && $this->logger->debug("Origin is allowed, proceed with adding CORS response headers.");
 
         $request->attributes->set(self::SHOULD_ALLOW_ORIGIN_ATTR, true);
     }
@@ -127,7 +122,7 @@ class CorsListener
     public function onKernelResponse(ResponseEvent $event): void
     {
         if (HttpKernelInterface::MAIN_REQUEST !== $event->getRequestType()) {
-            $this->logger->debug("Not a master type request, skip adding CORS response headers.");
+            $this->logger && $this->logger->debug("Not a master type request, skip adding CORS response headers.");
 
             return;
         }
@@ -138,14 +133,14 @@ class CorsListener
         $shouldForceOrigin = $request->attributes->getBoolean(self::SHOULD_FORCE_ORIGIN_ATTR);
 
         if (!$shouldAllowOrigin && !$shouldForceOrigin) {
-            $this->logger->debug("The origin should not be allowed and not be forced, skip adding CORS response headers.");
+            $this->logger && $this->logger->debug("The origin should not be allowed and not be forced, skip adding CORS response headers.");
 
             return;
         }
 
         // @phpstan-ignore booleanNot.alwaysFalse (an invalid overridden configuration resolver may not be trustworthy)
         if (!$options = $this->configurationResolver->getOptions($request)) {
-            $this->logger->debug("Could not resolve options for request, skip adding CORS response headers.");
+            $this->logger && $this->logger->debug("Could not resolve options for request, skip adding CORS response headers.");
 
             return;
         }
@@ -155,19 +150,19 @@ class CorsListener
             // add CORS response headers
             $origin = $request->headers->get('Origin');
 
-            $this->logger->debug(sprintf("Setting 'Access-Control-Allow-Origin' response header to '%s'.", $origin));
+            $this->logger && $this->logger->debug(sprintf("Setting 'Access-Control-Allow-Origin' response header to '%s'.", $origin));
 
             $response->headers->set('Access-Control-Allow-Origin', $origin);
 
             if ($options['allow_credentials']) {
-                $this->logger->debug("Setting 'Access-Control-Allow-Credentials' to 'true'.");
+                $this->logger && $this->logger->debug("Setting 'Access-Control-Allow-Credentials' to 'true'.");
 
                 $response->headers->set('Access-Control-Allow-Credentials', 'true');
             }
             if ($options['expose_headers']) {
                 $headers = strtolower(implode(', ', $options['expose_headers']));
 
-                $this->logger->debug(sprintf("Setting 'Access-Control-Expose-Headers' response header to '%s'.", $headers));
+                $this->logger && $this->logger->debug(sprintf("Setting 'Access-Control-Expose-Headers' response header to '%s'.", $headers));
 
                 $response->headers->set('Access-Control-Expose-Headers', $headers);
             }
@@ -175,7 +170,7 @@ class CorsListener
 
         if ($shouldForceOrigin) {
             assert(isset($options['forced_allow_origin_value']));
-            $this->logger->debug(sprintf("Setting 'Access-Control-Allow-Origin' response header to '%s'.", $options['forced_allow_origin_value']));
+            $this->logger && $this->logger->debug(sprintf("Setting 'Access-Control-Allow-Origin' response header to '%s'.", $options['forced_allow_origin_value']));
 
             $event->getResponse()->headers->set('Access-Control-Allow-Origin', $options['forced_allow_origin_value']);
         }
@@ -190,14 +185,14 @@ class CorsListener
         $response->setVary(['Origin']);
 
         if ($options['allow_credentials']) {
-            $this->logger->debug("Setting 'Access-Control-Allow-Credentials' response header to 'true'.");
+            $this->logger && $this->logger->debug("Setting 'Access-Control-Allow-Credentials' response header to 'true'.");
 
             $response->headers->set('Access-Control-Allow-Credentials', 'true');
         }
         if ($options['allow_methods']) {
             $methods = implode(', ', $options['allow_methods']);
 
-            $this->logger->debug(sprintf("Setting 'Access-Control-Allow-Methods' response header to '%s'.", $methods));
+            $this->logger && $this->logger->debug(sprintf("Setting 'Access-Control-Allow-Methods' response header to '%s'.", $methods));
 
             $response->headers->set('Access-Control-Allow-Methods', $methods);
         }
@@ -207,19 +202,19 @@ class CorsListener
                 : implode(', ', $options['allow_headers']); // @phpstan-ignore argument.type (isWildcard guarantees this is an array but PHPStan does not know)
 
             if ($headers) {
-                $this->logger->debug(sprintf("Setting 'Access-Control-Allow-Headers' response header to '%s'.", $headers));
+                $this->logger && $this->logger->debug(sprintf("Setting 'Access-Control-Allow-Headers' response header to '%s'.", $headers));
 
                 $response->headers->set('Access-Control-Allow-Headers', $headers);
             }
         }
         if ($options['max_age']) {
-            $this->logger->debug(sprintf("Setting 'Access-Control-Max-Age' response header to '%d'.", $options['max_age']));
+            $this->logger && $this->logger->debug(sprintf("Setting 'Access-Control-Max-Age' response header to '%d'.", $options['max_age']));
 
             $response->headers->set('Access-Control-Max-Age', (string) $options['max_age']);
         }
 
         if (!$this->checkOrigin($request, $options)) {
-            $this->logger->debug("Removing 'Access-Control-Allow-Origin' response header.");
+            $this->logger && $this->logger->debug("Removing 'Access-Control-Allow-Origin' response header.");
 
             $response->headers->remove('Access-Control-Allow-Origin');
 
@@ -228,7 +223,7 @@ class CorsListener
 
         $origin = $request->headers->get('Origin');
 
-        $this->logger->debug(sprintf("Setting 'Access-Control-Allow-Origin' response header to '%s'", $origin));
+        $this->logger && $this->logger->debug(sprintf("Setting 'Access-Control-Allow-Origin' response header to '%s'", $origin));
 
         $response->headers->set('Access-Control-Allow-Origin', $origin);
 
@@ -237,7 +232,7 @@ class CorsListener
             && strtolower((string) $request->headers->get('Access-Control-Request-Private-Network')) === 'true'
         ) {
             if ($options['allow_private_network']) {
-                $this->logger->debug("Setting 'Access-Control-Allow-Private-Network' response header to 'true'.");
+                $this->logger && $this->logger->debug("Setting 'Access-Control-Allow-Private-Network' response header to 'true'.");
 
                 $response->headers->set('Access-Control-Allow-Private-Network', 'true');
             } else {
@@ -249,7 +244,7 @@ class CorsListener
         // check request method
         $method = strtoupper((string) $request->headers->get('Access-Control-Request-Method'));
         if (!in_array($method, $options['allow_methods'], true)) {
-            $this->logger->debug(sprintf("Method '%s' is not allowed.", $method));
+            $this->logger && $this->logger->debug(sprintf("Method '%s' is not allowed.", $method));
 
             $response->setStatusCode(405);
 
@@ -305,10 +300,10 @@ class CorsListener
         if ($options['origin_regex'] === true) {
             // origin regex matching
             foreach ($options['allow_origin'] as $originRegexp) { // @phpstan-ignore foreach.nonIterable (isWildcard guarantees this is an array but PHPStan does not know)
-                $this->logger->debug(sprintf("Matching origin regex '%s' to origin '%s'.", $originRegexp, $origin));
+                $this->logger && $this->logger->debug(sprintf("Matching origin regex '%s' to origin '%s'.", $originRegexp, $origin));
 
                 if (preg_match('{'.$originRegexp.'}i', $origin)) {
-                    $this->logger->debug(sprintf("Origin regex '%s' matches origin '%s'.", $originRegexp, $origin));
+                    $this->logger && $this->logger->debug(sprintf("Origin regex '%s' matches origin '%s'.", $originRegexp, $origin));
 
                     return true;
                 }
@@ -316,13 +311,13 @@ class CorsListener
         } else {
             // old origin matching
             if (in_array($origin, $options['allow_origin'], true)) { // @phpstan-ignore argument.type (isWildcard guarantees this is an array but PHPStan does not know)
-                $this->logger->debug(sprintf("Origin '%s' is allowed.", $origin));
+                $this->logger && $this->logger->debug(sprintf("Origin '%s' is allowed.", $origin));
 
                 return true;
             }
         }
 
-        $this->logger->debug(sprintf("Origin '%s' is not allowed.", $origin));
+        $this->logger && $this->logger->debug(sprintf("Origin '%s' is not allowed.", $origin));
 
         return false;
     }
@@ -335,7 +330,7 @@ class CorsListener
     {
         $result = $options[$option] === true || (is_array($options[$option]) && in_array('*', $options[$option], true));
 
-        $this->logger->debug(sprintf("Option '%s' is %s a wildcard.", $option, $result ? '' : 'not'));
+        $this->logger && $this->logger->debug(sprintf("Option '%s' is %s a wildcard.", $option, $result ? '' : 'not'));
 
         return $result;
     }
